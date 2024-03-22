@@ -13,7 +13,7 @@ p.add_argument('-n', '--envname', default='',
                help='micromamba environment name')
 p.add_argument('-b', '--basedir', default='',
                help='vvg base directory')
-p.add_argument('-e', '--extraline', action='append',
+p.add_argument('-e', '--extraline', action='append', default=[],
                help='extra lines to insert as statements')
 
 args = p.parse_args()
