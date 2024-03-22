@@ -47,15 +47,15 @@ if [[ "${{BASH_SOURCE[0]}}" == "${{0}}" ]]; then
     . ~/.bashrc;
     export VVG_BASEDIR=${{VVG_BASEDIR}};
     export uMAMBA_ENVNAME=${{uMAMBA_ENVNAME}};
-    {';'.join(args.extraline)};
+    {';'.join(args.extraline)}
     . ${{BASHRC}}
     "
   )
 
 else
 
-  {';'.join(args.extraline)};
- q . ${{BASHRC}}
+  {';'.join(args.extraline)}
+  . ${{BASHRC}}
 
 fi
 
