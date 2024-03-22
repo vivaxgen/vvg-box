@@ -23,8 +23,8 @@ _script="$(readlink -f ${BASH_SOURCE[0]})"
 # Delete last component from $_script
 _mydir="$(dirname $_script)"
 
-# add vvg-base path
-PATH="$(dirname $_mydir)/bin":${PATH}
+# add VVGBIN rather than adding to path, to minimize name collision
+export VVGBIN="$(dirname $_mydir)/bin"
 
 function reload_vvg_profiles {
   for rc in ${VVG_BASEDIR}/etc/bashrc.d/*; do
