@@ -62,7 +62,12 @@ if [[ "${{BASH_SOURCE[0]}}" == "${{0}}" ]]; then
 
 else
 
+  # need to export MAMBA_ROOT_PREFIX since it will still be needed after
+  # sourcing
+  export MAMBA_ROOT_PREFIX=${{MAMBA_ROOT_PREFIX}}
+
   {';'.join(args.extraline)}
+
   . ${{BASHRC}}
 
 fi
