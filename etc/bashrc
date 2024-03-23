@@ -13,7 +13,7 @@
 PATH=${VVG_BASEDIR}/bin:${PATH}
 export APPTAINER_DIR=${VVG_BASEDIR}/opt/apptainer
 
-if [ -z ${MAMBA_ROOT_PREFIX:-}]; then
+if [[ -z ${MAMBA_ROOT_PREFIX:-} ]]; then
   export MAMBA_ROOT_PREFIX=${VVG_BASEDIR}/opt/umamba
 fi
 eval "$(micromamba shell hook -s posix)"
