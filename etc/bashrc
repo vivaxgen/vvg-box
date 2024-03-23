@@ -47,6 +47,8 @@ if [ ! -z ${VVG_PROMPT:-} ]; then
     PROMPT=${VVG_PROMPT}
 
     PS1="(${PROMPT}) [\u@\h \W]\$ "
+else
+    PROMPT=${uMAMBA_ENVNAME}
 fi
 
 export HISTFILE="${HOME}/.bash_history.${PROMPT}"
