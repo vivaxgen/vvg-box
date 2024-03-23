@@ -2,9 +2,9 @@
 
 # this script requires BASEDIR and uMAMBA_ENVNAME environment to be set
 
-import pathlib
 import os
 import argparse
+from pathlib import Path
 
 p = argparse.ArgumentParser()
 p.add_argument('-o', '--outfile', default='',
@@ -13,6 +13,8 @@ p.add_argument('-n', '--envname', default='',
                help='micromamba environment name')
 p.add_argument('-b', '--basedir', default='',
                help='vvg base directory')
+p.add_argument('-r', '--mamba-root', default='',
+               help='micromamba root directory prefix')
 p.add_argument('-e', '--extraline', action='append', default=[],
                help='extra lines to insert as statements')
 
@@ -20,12 +22,18 @@ args = p.parse_args()
 
 
 BASEDIR = (
-    pathlib.Path(args.basedir).resolve() if args.basedir else
-    pathlib.Path(os.environ['BASEDIR']).resolve()
+    Path(args.basedir).resolve() if args.basedir else
+    Path(os.environ['BASEDIR']).resolve()
+)
+MAMBA_ROOT_PREFIX = (
+    Path(args.mamba_root).resolve() if args.mamba_root else (
+        Path(pfx).resolve() if (pfx := os.environ.get('MAMBA_ROOT_PREFIX', '')) else
+        BASEDIR / 'opt' / 'umamba'
+    )
 )
 uMAMBA_ENVNAME = args.envname or os.environ['uMAMBA_ENVNAME']
 
-activation_file = (pathlib.Path(args.outfile) if args.outfile
+activation_file = (Path(args.outfile) if args.outfile
                    else BASEDIR / 'bin' / 'activate')
 
 activation_content = f"""#!/usr/bin/env bash
@@ -35,18 +43,18 @@ activation_content = f"""#!/usr/bin/env bash
 # installed
 VVG_BASEDIR={BASEDIR.as_posix()}
 BASHRC=${{VVG_BASEDIR}}/etc/bashrc
+MAMBA_ROOT_PREFIX={MAMBA_ROOT_PREFIX.as_posix()}
 uMAMBA_ENVNAME={uMAMBA_ENVNAME}
 
 if [[ "${{BASH_SOURCE[0]}}" == "${{0}}" ]]; then
-  set -o errexit
-  set -o pipefail
-  set -o nounset
+  set -euo pipefail
 
   bash --init-file <(echo "
     . /etc/profile;
     . ~/.bashrc;
     export VVG_BASEDIR=${{VVG_BASEDIR}};
     export uMAMBA_ENVNAME=${{uMAMBA_ENVNAME}};
+    export MAMBA_ROOT_PREFIX=${{MAMBA_ROOT_PREFIX}};
     {';'.join(args.extraline)}
     . ${{BASHRC}}
     "
