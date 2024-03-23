@@ -43,7 +43,7 @@ reload_vvg_profiles
 
 # modify PS1 and HISTFILE 
 
-if [ ! -z ${VVG_PROMPT} ]; then
+if [ ! -z ${VVG_PROMPT:-} ]; then
     PROMPT=${VVG_PROMPT}
 
     PS1="(${PROMPT}) [\u@\h \W]\$ "
