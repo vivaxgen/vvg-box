@@ -15,8 +15,11 @@ p.add_argument('-b', '--basedir', default='',
                help='vvg base directory')
 p.add_argument('-r', '--mamba-root', default='',
                help='micromamba root directory prefix')
-p.add_argument('-e', '--extraline', action='append', default=[],
+p.add_argument('-e', '--extraenv', action='append', default=[],
+               help='extra environment variable to be exported')
+p.add_argument('-l', '--extraline', action='append', default=[],
                help='extra lines to insert as statements')
+
 
 args = p.parse_args()
 
@@ -36,6 +39,13 @@ uMAMBA_ENVNAME = args.envname or os.environ['uMAMBA_ENVNAME']
 activation_file = (Path(args.outfile) if args.outfile
                    else BASEDIR / 'bin' / 'activate')
 
+# get extra environemnts
+for extra_env in args.extraenv:
+    env_name = extra_env.split('=', 1)[0]
+    args.extraline.append(
+        f'export {env_name}=${{{env_name}}}'
+    )
+
 activation_content = f"""#!/usr/bin/env bash
 
 # the directory below must be hard-coded since we cannot assume that
@@ -45,6 +55,8 @@ VVG_BASEDIR={BASEDIR.as_posix()}
 BASHRC=${{VVG_BASEDIR}}/etc/bashrc
 MAMBA_ROOT_PREFIX={MAMBA_ROOT_PREFIX.as_posix()}
 uMAMBA_ENVNAME={uMAMBA_ENVNAME}
+
+{'\n'.join(args.extraenv)}
 
 if [[ "${{BASH_SOURCE[0]}}" == "${{0}}" ]]; then
   set -euo pipefail
