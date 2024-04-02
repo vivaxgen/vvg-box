@@ -32,7 +32,8 @@ export VVGBIN="$(dirname $_mydir)/bin"
 function reload_vvg_profiles {
   for rc in ${VVG_BASEDIR}/etc/bashrc.d/*; do
     if [ -f "$rc" ]; then
-        . "$rc"
+        # source file but prevent from exiting if errors occur
+        . "$rc" || true
     fi
   done
   unset rc
@@ -41,20 +42,5 @@ function reload_vvg_profiles {
 
 reload_vvg_profiles
 
-# modify PS1 and HISTFILE 
-
-if [ ! -z ${VVG_PROMPT:-} ]; then
-    PROMPT=${VVG_PROMPT}
-
-    PS1="(${PROMPT}) [\u@\h \W]\$ "
-else
-    PROMPT=${uMAMBA_ENVNAME}
-fi
-
-export HISTFILE="${HOME}/.bash_history.${PROMPT}"
-
-HISTSIZE=20000
-HISTFILESIZE=20000
-history -c; history -r
 
 # EOF
