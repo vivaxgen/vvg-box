@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+# required exported environment
+#   VVG_BASEDIR
+#   MAMBA_ROOT_PREFIX
+#   uMAMBA_ENVNAME
+
+# required non-exported environment
+#   BASHRC
+
+# optional environment
+#   SPAWN_SHELL
+
+echo "Sourcing vvg-base/bin/activate"
+
+if [ ${SPAWN_SHELL:-0} -ge 1 ]; then
+
+    SPAWN_SHELL=0
+    set -euo pipefail
+
+    echo "Spawning new non-login interactive shell..."
+    exec bash --init-file <(echo "
+    	. ~/.bashrc
+        . ${BASHRC}
+    ")
+
+else
+	
+	echo "Sourcing current interactive shell..."
+    . ${BASHRC}
+
+fi
+
+echo "End of script"
+
+# EOF

@@ -51,39 +51,22 @@ activation_content = f"""#!/usr/bin/env bash
 # the directory below must be hard-coded since we cannot assume that
 # GNU coreutils (which provides readlink and dirname commands) is already
 # installed
-VVG_BASEDIR={BASEDIR.as_posix()}
+export VVG_BASEDIR={BASEDIR.as_posix()}
+export MAMBA_ROOT_PREFIX={MAMBA_ROOT_PREFIX.as_posix()}
+export uMAMBA_ENVNAME={uMAMBA_ENVNAME}
 BASHRC=${{VVG_BASEDIR}}/etc/bashrc
-MAMBA_ROOT_PREFIX={MAMBA_ROOT_PREFIX.as_posix()}
-uMAMBA_ENVNAME={uMAMBA_ENVNAME}
 
-{'\n'.join(args.extraenv)}
+{'\n'.join(args.extraline)}
+
 
 if [[ "${{BASH_SOURCE[0]}}" == "${{0}}" ]]; then
-  set -euo pipefail
-
-  bash --init-file <(echo "
-    . /etc/profile;
-    . ~/.bashrc;
-    export VVG_BASEDIR=${{VVG_BASEDIR}};
-    export uMAMBA_ENVNAME=${{uMAMBA_ENVNAME}};
-    export MAMBA_ROOT_PREFIX=${{MAMBA_ROOT_PREFIX}};
-    {';'.join(args.extraline)}
-    . ${{BASHRC}}
-    "
-  )
-
-else
-
-  # need to export MAMBA_ROOT_PREFIX since it will still be needed after
-  # sourcing
-  export MAMBA_ROOT_PREFIX=${{MAMBA_ROOT_PREFIX}}
-
-  {';'.join(args.extraline)}
-
-  . ${{BASHRC}}
-
+    # new shell will be spawned
+    export SPAWN_SHELL=1
 fi
 
+. ${{VVG_BASEDIR}}/envs/vvg-base/bin/activate
+
+# EOF
 """
 
 with open(activation_file, "w") as out:
