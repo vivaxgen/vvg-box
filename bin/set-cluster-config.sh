@@ -8,7 +8,7 @@ if [[ -z ${VVG_BASEDIR:-} ]]; then
 fi
 
 BASHRC_DIR=${VVG_BASEDIR}/etc/bashrc.d
-SNAKEMAKEPROFILE_DIR=${VVG_BASEDIR}/envs/vvg-base/snakemake-profiles
+SNAKEMAKEPROFILE_DIR=${VVG_BASEDIR}/envs/vvg-base/etc/snakemake-profiles
 
 if [ -x "$(command -v srun)" ] && [ -x "$(command -v scancel)" ]; then
   echo "Setting up for SLURM"
