@@ -11,8 +11,6 @@
 # optional environment
 #   SPAWN_SHELL
 
-echo "Sourcing vvg-base/bin/activate"
-
 if [ ${SPAWN_SHELL:-0} -ge 1 ]; then
 
     SPAWN_SHELL=0
@@ -30,7 +28,5 @@ else
     . ${BASHRC}
 
 fi
-
-echo "End of script"
 
 # EOF

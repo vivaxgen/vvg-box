@@ -41,9 +41,10 @@ activation_file = (Path(args.outfile) if args.outfile
 
 # get extra environemnts
 for extra_env in args.extraenv:
-    env_name = extra_env.split('=', 1)[0]
+    print(f'additional env: {extra_env}')
+    env_name, env_value = extra_env.split('=', 1)
     args.extraline.append(
-        f'export {env_name}=${{{env_name}}}'
+        f'export {env_name}={env_value}'
     )
 
 activation_content = f"""#!/usr/bin/env bash

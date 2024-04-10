@@ -1,4 +1,4 @@
 
-export SNAKEMAKE_PROFILE=${VVG_BASEDIR}/etc/snakemake-profiles/slurm
+export SNAKEMAKE_PROFILE=${VVG_BASEDIR}/envs/vvg-base/etc/snakemake-profiles/slurm
 
 
