@@ -1,5 +1,5 @@
 executor: "cluster-generic"
-cluster-generic-submit-cmd: "pbs-submit.py --depend \"{dependencies}\""
+cluster-generic-submit-cmd: "pbs-submit.py"
 cluster-generic-status-cmd: "pbs-status.py"
 jobscript: "pbs-jobscript.sh"
 jobs: 5000
