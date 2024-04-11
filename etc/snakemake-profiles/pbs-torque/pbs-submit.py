@@ -118,23 +118,22 @@ mem=""
 walltime=""
 
 if "threads" in job_properties:
-    ppn = "ncpus=" + str(job_properties["threads"])
+    ncpus = "ncpus=" + str(job_properties["threads"])
 
 if "resources" in job_properties:
     resources = job_properties["resources"]
     #if "nodes" in resources: nodes="nodes=" + str(resources["nodes"])
     #if ppn and not nodes: nodes="nodes=1"
-    if "mem" in resources: mem="mem=" + str(resources["mem"])
-    if "walltime" in resources: walltime="walltime=" + str(resources["walltime"])
+    if "mem" in resources: mem = "mem=" + str(resources["mem"])
+    if "walltime" in resources: walltime = "walltime=" + str(resources["walltime"])
 
-if nodes or ppn or mem or walltime: resourceparams = " -l \""
-if nodes: resourceparams = resourceparams + nodes
-if nodes and ppn: resourceparams = resourceparams + ":" + ppn
-if nodes and mem: resourceparams = resourceparams + ","
+if ncpus or mem or walltime: resourceparams = " -l \""
+if ncpus: resourceparams = resourceparams + ncpus
+if mem: resourceparams = resourceparams + ","
 if mem: resourceparams = resourceparams + mem
 if walltime and (nodes or mem): resourceparams = resourceparams + ","
 if walltime: resourceparams = resourceparams + walltime
-if nodes or mem or walltime: resourceparams = resourceparams + "\""
+if nodes or ncpus or mem or walltime: resourceparams = resourceparams + "\""
 
 if "cluster" in job_properties:
     cluster = job_properties["cluster"]
