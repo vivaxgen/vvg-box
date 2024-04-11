@@ -38,7 +38,7 @@ parser.add_argument("--help", help="Display help message.",action="store_true")
 parser.add_argument("positional",action="append",nargs="?")
 args = parser.parse_args()
 
-if args.help :
+if args.help:
     parser.print_help()
     sys.exit(0)
 
@@ -77,14 +77,14 @@ extras=""
 
 
 if args.depend:
-	for m in args.depend.split(" "):
-		depend = depend + ":" + m
+    for m in args.depend.split(" "):
+        depend = depend + ":" + m
 if depend:
-	depend = " -W \"depend=afterok" + depend + "\""
+    depend = " -W \"depend=afterok" + depend + "\""
 
 if args.positional:
-	for m in args.positional:
-		extras = extras + " " + m
+    for m in args.positional:
+        extras = extras + " " + m
 
 if args.a: atime = " -a " + args.a
 if args.A: acc_string = " -A " + args.A
@@ -110,7 +110,7 @@ if args.u: user = " -u " + args.u
 if args.v: ev = " -v " + args.v
 if args.V: eall = " -V"
 if args.w: wd = " -w " + args.w
-if args.W: add= " -W \"" + args.W + "\""
+if args.W: add = " -W \"" + args.W + "\""
 
 nodes=""
 ppn=""
@@ -118,12 +118,12 @@ mem=""
 walltime=""
 
 if "threads" in job_properties:
-    ppn = "ppn=" + str(job_properties["threads"])
+    ppn = "ncpus=" + str(job_properties["threads"])
 
 if "resources" in job_properties:
     resources = job_properties["resources"]
-    if "nodes" in resources: nodes="nodes=" + str(resources["nodes"])
-    if ppn and not nodes : nodes="nodes=1"
+    #if "nodes" in resources: nodes="nodes=" + str(resources["nodes"])
+    #if ppn and not nodes: nodes="nodes=1"
     if "mem" in resources: mem="mem=" + str(resources["mem"])
     if "walltime" in resources: walltime="walltime=" + str(resources["walltime"])
 
@@ -145,9 +145,9 @@ if "cluster" in job_properties:
         os.makedirs(os.path.dirname(cluster["output"]), exist_ok=True)
         so = " -o " + cluster["output"]
 
-cmd = "qsub {a}{A}{b}{c}{C}{d}{D}{e}{f}{h}{j}{l}{m}{M}{N}{o}{p}{P}{q}{t}{u}{v}{V}{w}{W}{rp}{dep}{ex}".format(\
-	a=atime,A=acc_string,b=pbs_time,c=chkpt,C=pref,d=dd,D=rd,e=se,f=ft,h=hold,j=j,l=resource,m=mail,M=mailuser,\
-	N=jname,o=so,p=priority,P=proxy,q=q,t=ar,u=user,v=ev,V=eall,w=wd,W=add,rp=resourceparams,dep=depend,ex=extras)
+cmd = "qsub {a}{A}{b}{c}{C}{d}{D}{e}{f}{h}{j}{l}{m}{M}{N}{o}{p}{P}{q}{t}{u}{v}{V}{w}{W}{rp}{dep}{ex}".format(
+    a=atime,A=acc_string,b=pbs_time,c=chkpt,C=pref,d=dd,D=rd,e=se,f=ft,h=hold,j=j,l=resource,m=mail,M=mailuser,
+    N=jname,o=so,p=priority,P=proxy,q=q,t=ar,u=user,v=ev,V=eall,w=wd,W=add,rp=resourceparams,dep=depend,ex=extras)
 
 try:
     res = subprocess.run(cmd, check=True, shell=True, stdout=subprocess.PIPE)
