@@ -8,7 +8,7 @@ vivaxGEN system packages.
 Installation
 ------------
 
-To install, execute the following command:
+To install, execute the following command::
 
     "${SHELL}" <(curl -L https://raw.githubusercontent.com/vivaxgen/vvg-base/main/install.sh)
 
