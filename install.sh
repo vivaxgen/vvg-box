@@ -125,7 +125,7 @@ fi
 chmod +x "${BINDIR}/micromamba"
 
 
-# this is specific for vivaxGEN ngs-pipeline
+# this is specific for vivaxGEN Base utility
 
 echo "Setting up base directory structure at ${BASEDIR}"
 
