@@ -4,6 +4,19 @@ vivaxGEN Base Installation Utility
 This repo contains the necessary helpers for system installation of most
 vivaxGEN system packages.
 
+
+Installation
+------------
+
+To install, execute the following command:
+
+    "${SHELL}" <(curl -L https://raw.githubusercontent.com/vivaxgen/vvg-base/main/install.sh)
+
+Optional enviroment variable that can be supplied for the above commands are:
+
+- MAMBA_ROOT_PREFIX
+
+
 Quick Overview
 --------------
 
@@ -19,9 +32,9 @@ The standalone micromamba binary will be downloaded and installed in the
 installation directory, and all of its configuration and settings will be
 stored in the installation directory as well.
 There will be no files stored in the home directory of users, apart from the
-download cache directory of micromamba in ~/.cache/ and some added lines in
-~/.conda/environment (if the file already exists) of the user who executes the
-installation script.
+download cache directory of micromamba in ``~/.cache/`` and some added lines in
+``~/.conda/environment`` (if the file already exists) of the user who executes
+the installation script.
 The cache and the added lines can be removed manually without affecting the
 installed system.
 
@@ -114,4 +127,19 @@ The vivaxGEN Base utility also provides some command line tools as follows:
         This script can be executed to update all cloned repository in the
         ``envs`` directory.
 
+After the Base utility environment has been activated, the above commands can
+be accessed using $VVGBIN environment variable, eg::
+
+    $VVGBIN/update-pipeline.sh
+
+The installation script for vivaxGEN Base utility will also install the
+following software using micromamba with conda-forge channel (unless the
+software are already installed by the system):
+
+- git
+- coreutils (for ``readlink`` and ``realpath``)
+- parallel
+- c compiler suite (c-compiler, usually gcc)
+- c++ compiler suite (cxx-compiler, usually g++)
+- Python (3.12)
 
