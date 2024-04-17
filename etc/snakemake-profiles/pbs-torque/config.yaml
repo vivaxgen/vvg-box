@@ -1,6 +1,6 @@
 executor: "cluster-generic"
 cluster-generic-submit-cmd: "pbs-submit.py"
-cluster-generic-status-cmd: "pbs-status.py"
+#cluster-generic-status-cmd: "pbs-status.py"
 jobscript: "pbs-jobscript.sh"
 jobs: 5000
 immediate-submit: False
