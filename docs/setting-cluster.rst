@@ -25,10 +25,10 @@ OpenPBS, PBS Pro), some additional steps might need to be done since each
 variant of PBS might have slightly different arguments or output format.
 
 
-Testing the Submission
-----------------------
+Testing the Cluster Setting
+---------------------------
 
-To test the cluster/workload manager setting, run the following command:
+To test the cluster/workload manager setting, run the following command::
 
 	ngs-pl run-snakefile --snakefile test_cluster.smk
 
@@ -46,8 +46,8 @@ For example, a PBSPro setting might require storage or extra settings so that
 submitted jobs can be run successfully.
 
 To add extra arguments to the submission command, create a resource file in
-$VVG_BASEDIR/etc/bashrc.d/ directory named ``95-cluster-extra-flags`` with the
-following content::
+``$VVG_BASEDIR/etc/bashrc.d/`` directory named ``95-cluster-extra-flags`` with
+the following content::
 
 	SNAKEMAKE_CLUSTER_EXTRA_FLAGS="<ADDITIONAL-FLAGS>"
 
@@ -72,8 +72,9 @@ a resource file named ``99-snakemake-profile`` with the following content::
 	export SNAKEMAKE_PROFILE=${VVG_BASEDIR}/etc/snakemake-profiles/<YOUR_PROFILE_DIR>
 
 Activate the environment (or re-activate by exiting and activating the
-environment), and check that the SNAKEMAKE_PROFILE environment variables are
-point to the correct profile directory using the following command::
+environment), and check that the SNAKEMAKE_PROFILE environment variables points
+to the correct profile directory using the following command::
 
 	env | grep SNAKEMAKE
 
+Test the setting by running the command in the Testing section.
