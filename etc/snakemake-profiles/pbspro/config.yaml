@@ -6,3 +6,7 @@ jobs: 5000
 immediate-submit: False
 verbose: true
 notemp: true
+
+default-resources:
+   - runtime: 7d
+   - mem_gb: 16
