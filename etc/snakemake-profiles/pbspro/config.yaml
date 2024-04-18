@@ -8,5 +8,5 @@ verbose: true
 notemp: true
 
 default-resources:
-   - runtime: 7d
-   - mem_gb: 16
+   - runtime=7d
+   - mem_gb=16
