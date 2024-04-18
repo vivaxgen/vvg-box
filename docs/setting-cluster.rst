@@ -2,6 +2,9 @@
 Setting Up for Cluster System
 =============================
 
+Overview
+--------
+
 During installation, vvg-base (vivaxGEN Base utility) will try to automatically
 detect whether a workload manager or job scheduler is available in the system.
 The script that perform the detection is ``$VVGBIN/set-cluster-config.sh`` and
@@ -24,6 +27,18 @@ However, because there are several variants of PBS-based system (eg. Torque,
 OpenPBS, PBS Pro), some additional steps might need to be done since each
 variant of PBS might have slightly different arguments or output format.
 
+In case that the detection script fails to detect the correct profile from the
+provided profiles, a symbolic link can be generated manually.
+For SLURM, use the following command to generate the necessary symbolic link::
+
+	ln -sr ${VVG_BASEDIR}/envs/vvg-base/etc/snakemake-profiles/slurm/99-snakemake-profile ${VVG_BASEDIR}/etc/bashrc.d
+
+For PBS Pro, use the following command::
+
+	ln -sr ${VVG_BASEDIR}/envs/vvg-base/etc/snakemake-profiles/pbspro/99-snakemake-profile ${VVG_BASEDIR}/etc/bashrc.d
+
+For other PBS-derived workload manager, follow the steps in the Manual Setup of
+Cluster Profile section.
 
 Testing the Cluster Setting
 ---------------------------
@@ -40,7 +55,7 @@ nodes to files named test-cluster-[1234] in the current directory.
 Adding Extra Argument to Submission Script
 ------------------------------------------
 
-In some settings, the workload manager/job scheduler require extra arguments
+In some settings, the workload manager/job scheduler requires extra arguments
 or flags for its submission command.
 For example, a PBSPro setting might require storage or extra settings so that
 submitted jobs can be run successfully.

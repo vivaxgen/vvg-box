@@ -20,11 +20,12 @@ Optional enviroment variable that can be supplied for the above commands are:
 Quick Overview
 --------------
 
-The objective of this vivaxGEN Base utility is to be able to install a set of
-software packages, including the binary dependencies, in any directory without
-the needs to install any prerequisite software other than ``curl`` and ``bash``
-shell, and to allow other users who can access the installation directory to
-also use the software packages without cluttering their home directory.
+The objective of this vivaxGEN Base utility is (1) to be able to install a set
+of software packages including the binary dependencies easily, (2) in any
+directory, (3) without the needs to install any prerequisite software other
+than ``curl`` and ``bash`` shell, (4) by users without root privileges, and
+(5) allowing other users who can access the installation directory to also use
+the software packages (6) without cluttering their home directory.
 
 A standalone micromamba is utilized to provide all necessary binary
 dependencies.
