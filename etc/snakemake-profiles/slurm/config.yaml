@@ -7,11 +7,15 @@ cluster-generic-status-cmd: "slurm-status.py"
 max-jobs-per-second: "10"
 max-status-checks-per-second: "10"
 local-cores: 1
-latency-wait: "5"
+latency-wait: "2"
 use-conda: "False"
 use-singularity: "False"
 jobs: "384"
 printshellcmds: "False"
+
+default-resources:
+  - runtime=7d
+  - mem_mb=16384
 
 # Example resource configuration
 # default-resources:
