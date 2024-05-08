@@ -28,8 +28,11 @@ _script="$(readlink -f ${BASH_SOURCE[0]})"
 # Delete last component from $_script
 _mydir="$(dirname $_script)"
 
+# add VVG_REPODIR for the vvg-base repository
+export VVG_REPODIR="$(dirname $_mydir)"
+
 # add VVGBIN rather than adding to path, to minimize name collision
-export VVGBIN="$(dirname $_mydir)/bin"
+export VVGBIN="${VVG_REPODIR}/bin"
 
 function reload_vvg_profiles {
   for rc in ${VVG_BASEDIR}/etc/bashrc.d/[0-9][0-9]-*; do
