@@ -187,6 +187,9 @@ PYVER=${PYVER:-3.12}
 echo "Installing base python ${PYVER}"
 retry 5 micromamba -y install python=${PYVER} -c conda-forge -c defaults
 
+echo "Installing Snakemake"
+retry 5 pip3 install "snakemake<9" snakemake-executor-plugin-cluster-generic
+
 # install vvg-base repo
 echo "Cloning vivaxGEN vvg-base repository"
 git clone https://github.com/vivaxgen/vvg-base.git ${ENVS_DIR}/vvg-base
