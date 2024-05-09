@@ -13,6 +13,10 @@ use-singularity: "False"
 jobs: "384"
 printshellcmds: "False"
 
+default-resources:
+  - runtime=7d
+  - mem_mb=16384
+
 # Example resource configuration
 # default-resources:
 #   - runtime=100
