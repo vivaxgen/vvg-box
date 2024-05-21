@@ -183,6 +183,11 @@ if ! ([ -x "$(command -v c++)" ] && [ -x "$(command -v ar)" ]); then
   retry 5 micromamba -y install cxx-compiler -c conda-forge
 fi
 
+# install Mamba to complement Micromamba since Snakemake currently can not directly
+# handle Micromamba
+echo "Installing Mamba"
+retry 5 micromamba -y install mamba -c conda-forge -c defaults
+
 PYVER=${PYVER:-3.12}
 echo "Installing base python ${PYVER}"
 retry 5 micromamba -y install python=${PYVER} -c conda-forge -c defaults
@@ -206,7 +211,7 @@ __IN_VVG_INSTALLATION__=1
 source ${VVG_BASEDIR}/etc/bashrc
 
 echo "Detecting job/batch scheduler"
-${ENVS_DIR}/vvg-base/bin/set-cluster-config.sh
+${ENVS_DIR}/vvg-base/bin/set-snakemake-profile.py
 
 echo
 echo "vivaxGEN base installation has been successfully installed."
