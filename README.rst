@@ -8,7 +8,7 @@ Cluster Profiles
 ----------------
 
 For information about cluster profiles (batch manager/job scheduler),
-go to `the Wiki <https://github.com/vivaxgen/vvg-base/wiki>`.
+go to `the Wiki <https://github.com/vivaxgen/vvg-base/wiki>`_.
 
 
 Installation
