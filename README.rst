@@ -4,6 +4,12 @@ vivaxGEN Base Installation Utility
 This repo contains the necessary helpers for system installation of most
 vivaxGEN system packages.
 
+Cluster Profiles
+----------------
+
+For information about cluster profiles (batch manager/job scheduler),
+go to `the Wiki <https://github.com/vivaxgen/vvg-base/wiki>`.
+
 
 Installation
 ------------
