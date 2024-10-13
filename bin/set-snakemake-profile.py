@@ -20,12 +20,19 @@ except KeyError:
 SNAKEMAKE_PROFILE_FILE = '90-snakemake-profile'
 
 p = argparse.ArgumentParser()
+p.add_argument('--set-no-profile', default=False, action='store_true',
+               help='do not set any profile')
 p.add_argument('--profile-source-file', default='',
                help='profile source file that will be symbolic-linked')
 
 args = p.parse_args()
 
 target = VVG_BASEDIR / 'etc' / 'bashrc.d' / SNAKEMAKE_PROFILE_FILE
+
+if args.set_no_profile:
+    target.unlink(missing_ok=True)
+    print('Profile removed from the link. Please reactivate the environment to take effect.')
+    sys.exit(0)
 
 if args.profile_source_file:
     source_file = Path(args.profile_source_file)
