@@ -1,4 +1,4 @@
 
-export SNAKEMAKE_PROFILE=${VVG_BASEDIR}/envs/vvg-base/etc/snakemake-profiles/pbs-torque
+export SNAKEMAKE_PROFILE=${VVG_BASEDIR}/envs/vvg-base/etc/snakemake-profiles/pbspro
 
 
