@@ -197,7 +197,7 @@ retry 5 pip3 install "snakemake<9" snakemake-executor-plugin-cluster-generic
 
 # install vvg-base repo
 echo "Cloning vivaxGEN vvg-base repository"
-git clone https://github.com/vivaxgen/vvg-base.git ${ENVS_DIR}/vvg-base
+git clone --depth 1 https://github.com/vivaxgen/vvg-base.git ${ENVS_DIR}/vvg-base
 ln -sr ${ENVS_DIR}/vvg-base/etc/bashrc ${ETC_DIR}/bashrc
 
 # prepare activation file
@@ -209,6 +209,14 @@ echo "Resourcing vvg-base environment"
 export VVG_BASEDIR=${BASEDIR}
 __IN_VVG_INSTALLATION__=1
 source ${VVG_BASEDIR}/etc/bashrc
+
+# check if we are provided with SPECDIR
+if [[ -z ${SPECDIR:-} ]]; then
+  echo "Using default packages"
+else
+  echo "Using specification directory ${SPECDIR} to install packages"
+  ${VVGBIN}/install-from-specdir.py
+fi
 
 echo "Detecting job/batch scheduler"
 ${ENVS_DIR}/vvg-base/bin/set-snakemake-profile.py
