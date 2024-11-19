@@ -199,6 +199,8 @@ retry 5 pip3 install "snakemake<9" snakemake-executor-plugin-cluster-generic
 echo "Cloning vivaxGEN vvg-base repository"
 git clone --depth 1 https://github.com/vivaxgen/vvg-base.git ${ENVS_DIR}/vvg-base
 ln -sr ${ENVS_DIR}/vvg-base/etc/bashrc ${ETC_DIR}/bashrc
+ln -sr ${ENVS_DIR}/vvg-base/bin/exec ${BINDIR}/exec
+ln -sr ${BINDIR}/activate ${BINDIR}/shell
 
 # prepare activation file
 echo "Preparing activation source file"
