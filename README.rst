@@ -37,28 +37,28 @@ Optional enviroment variable that can be supplied for the above commands are:
 Usage
 -----
 
-Assuming that the base installation directory is VVGBASE, to open a new shell
+Assuming that the base installation directory is VVGBOX, to open a new shell
 with active environment (exit by pressing CTRL-D or type exit) use the
 following command::
 
-    VVGBASE/bin/activate
+    VVGBOX/bin/activate
 
 or::
 
-    VVGBASE/bin/shell
+    VVGBOX/bin/shell
 
 To activate the environment with current shell (or for a job script)::
 
-    source VVGBASE/bin/activate
+    source VVGBOX/bin/activate
 
 or (pay attention to the dot at the beginning of the line)::
 
-    . VVGBASE/bin/activate
+    . VVGBOX/bin/activate
     
 To run any installed software in the box without opening new shell nor sourcing
 the activation script (also for a job script), use the following pattern::
 
-    VVGBASE/bin/exec myprog --argument ...
+    VVGBOX/bin/exec myprog --argument ...
 
 
 Quick Overview
