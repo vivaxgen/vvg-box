@@ -237,10 +237,10 @@ echo "    source `realpath ${BINDIR}/activate`"
 echo
 echo "or execute a software directly:"
 echo
-echo "    `realpath ${BINDIR}/exec` software --argument ..."
+echo "    `realpath ${BINDIR}`/exec software --argument ..."
 echo
 echo "example:"
 echo
-echo "    `realpath ${BINDIR}/exec` micromamba list"
+echo "    `realpath ${BINDIR}`/exec micromamba list"
 echo
 # EOF
