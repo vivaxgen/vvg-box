@@ -8,8 +8,8 @@
 # - uMAMBA_ENVNAME
 # - PYVER
 
-__VERSION__='2024.04.03.01'
-echo "vivaxGEN base installation script version: ${__VERSION__}"
+__VERSION__='2024.11.30.01'
+echo "vivaxGEN Box installation script version: ${__VERSION__}"
 
 set -eu
 
@@ -61,19 +61,19 @@ esac
 
 # Parsing arguments
 if [ -t 0 ] && [ -z "${BASEDIR:-}" ]; then
-  printf "Base directory? [./vvg-base] "
+  printf "Base directory? [./vvg-box] "
   read BASEDIR
 fi
 
 if [ -t 0 ] && [ -z "${uMAMBA_ENVNAME:-}" ]; then
-  printf "micromamba environment name? [vvg-base] "
+  printf "micromamba environment name? [vvg-box] "
   read uMAMBA_ENVNAME
 fi
 
 # Fallbacks
-export BASEDIR="${BASEDIR:-./vvg-base}"
+export BASEDIR="${BASEDIR:-./vvg-box}"
 BINDIR="${BASEDIR}/bin"
-export uMAMBA_ENVNAME=${uMAMBA_ENVNAME:-vvg-base}
+export uMAMBA_ENVNAME=${uMAMBA_ENVNAME:-vvg-box}
 uMAMBA_DIR="${BASEDIR}/opt/umamba"
 
 mkdir -p ${BINDIR}
@@ -197,20 +197,21 @@ retry 5 pip3 install "snakemake<9" snakemake-executor-plugin-cluster-generic
 
 # install vvg-base repo
 echo "Cloning vivaxGEN vvg-base repository"
-git clone --depth 1 https://github.com/vivaxgen/vvg-base.git ${ENVS_DIR}/vvg-base
-ln -sr ${ENVS_DIR}/vvg-base/etc/bashrc ${ETC_DIR}/bashrc
-ln -sr ${ENVS_DIR}/vvg-base/bin/exec ${BINDIR}/exec
-ln -sr ${BINDIR}/activate ${BINDIR}/shell
+git clone --depth 1 https://github.com/vivaxgen/vvg-base.git ${ENVS_DIR}/vvg-box
+ln -sr ${ENVS_DIR}/vvg-box/etc/bashrc ${ETC_DIR}/bashrc
 
 # prepare activation file
 echo "Preparing activation source file"
-${ENVS_DIR}/vvg-base/bin/generate-activation-script.py
+${ENVS_DIR}/vvg-box/bin/generate-activation-script.py
 
 # re-source activation script
-echo "Resourcing vvg-base environment"
+echo "Resourcing vvg-box environment"
 export VVG_BASEDIR=${BASEDIR}
 __IN_VVG_INSTALLATION__=1
 source ${VVG_BASEDIR}/etc/bashrc
+
+# all the following run under active vvg-box environment
+${VVGBIN}/generate-executable-links.py
 
 # check if we are provided with SPECDIR
 if [[ -z ${SPECDIR:-} ]]; then
@@ -221,18 +222,25 @@ else
 fi
 
 echo "Detecting job/batch scheduler"
-${ENVS_DIR}/vvg-base/bin/set-snakemake-profile.py
+${ENVS_DIR}/vvg-box/bin/set-snakemake-profile.py
 
 echo
-echo "vivaxGEN base installation has been successfully installed."
-echo "To activate the micromamba environment, either run the activation script"
+echo "vivaxGEN Box (vvg-box) has been successfully installed."
+echo "To activate the environment, either run the activation script"
 echo "to spawn a new shell:"
 echo
-echo "    ${BINDIR}/activate"
+echo "    `realpath ${BINDIR}/activate`"
 echo
 echo "or source the activation script (eg. inside another script):"
 echo
-echo "    source ${BINDIR}/activate"
+echo "    source `realpath ${BINDIR}/activate`"
 echo
-
+echo "or execute a software directly:"
+echo
+echo "    `realpath ${BINDIR}/exec` software --argument ..."
+echo
+echo "example:"
+echo
+echo "    `realpath ${BINDIR}/exec` micromamba list"
+echo
 # EOF
