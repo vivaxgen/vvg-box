@@ -23,8 +23,10 @@ if [ ${SPAWN_SHELL:-0} -ge 1 ]; then
     ")
 
 else
-	
-	echo "Sourcing current interactive shell..."
+
+    if [[ -z "$VVG_SILENT" || "$VVG_SILENT" != "1" ]]; then
+	    echo "Sourcing current interactive shell..."
+    fi
     . ${BASHRC}
 
 fi
