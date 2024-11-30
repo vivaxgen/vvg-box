@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# this script should be run under active vvg-base environment
+# this script should be run under active vvg-box environment
 
 import os
 import sys
@@ -24,7 +24,7 @@ if not args.outdir:
 
     except KeyError:
         print('ERR: without --outdir, this script must be run under active '
-              'vvg-base environment')
+              'vvg-box environment')
         sys.exit(101)
 else:
     outdir = Path(args.outdir)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# this script needs to be run under active vvg-base environment
+# this script needs to be run under active vvg-box environment
 
 import os
 import sys
@@ -14,7 +14,7 @@ try:
     VVG_REPODIR = Path(os.environ.get('VVG_REPODIR'))
 
 except KeyError:
-    print('ERR: this script must be run under active vvg-base environment')
+    print('ERR: this script must be run under active vvg-box environment')
     sys.exit(101)
 
 SNAKEMAKE_PROFILE_FILE = '90-snakemake-profile'
