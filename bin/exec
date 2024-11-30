@@ -5,6 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Source the 'activate' script located in the same directory
 if [ -f "$SCRIPT_DIR/activate" ]; then
+    export VVG_SILENT=1
     source "$SCRIPT_DIR/activate"
 else
     echo "Error: 'activate' script not found in the same directory as this script."
