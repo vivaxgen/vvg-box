@@ -237,7 +237,7 @@ echo "    source `realpath ${BINDIR}/activate`"
 echo
 echo "or execute a software directly:"
 echo
-echo "    `realpath ${BINDIR}`/exec software --argument ..."
+echo "    `realpath ${BINDIR}`/exec software [ARGS ...]"
 echo
 echo "example:"
 echo
