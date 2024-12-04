@@ -22,7 +22,7 @@ Installation
 
 To install, execute the following command::
 
-    "${SHELL}" <(curl -L https://raw.githubusercontent.com/vivaxgen/vvg-base/main/install.sh)
+    "${SHELL}" <(curl -L https://raw.githubusercontent.com/vivaxgen/vvg-box/main/install.sh)
 
 Optional enviroment variable that can be supplied for the above commands are:
 
