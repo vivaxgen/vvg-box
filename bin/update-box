@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+
+# this command needs to be in bash and source the inst-deps.sh script
+# since the inst-deps.sh script may need to set environment variables
+# required for the next inst-deps.sh script to run
+
+# if VVG_PULL_WITHOUT_TAG is set, then all pulls are not using tag
+
+echo "Updating all repositories under $VVG_BASEDIR/envs..."
+for p in $VVG_BASEDIR/envs/*; do
+    if [ -d "$p" ]; then
+        echo "Updating ${p}"
+        (
+            cd "$p";
+            if [ -z "${VVG_PULL_WITHOUT_TAG+x}" ] && [ -f ".git-pull-tag" ]; then
+                tag=$(<.git-pull-tag)
+                echo "Pulling from main ${tag}"
+                git pull origin "${tag}";
+            else
+                echo "Pulling from main"
+                git pull;
+            fi
+        )
+    fi
+done
+unset p
+
+# check for existence of etc/installed-repo.txt to perform etc/inst-script/int-deps.sh in order
+# otherwise, just perform in alphanumeric order
+
+# Check if etc/installed-repo.txt exists
+if [ -f "${VVG_BASEDIR}/etc/installed-repo.txt" ]; then
+    # Loop through each line in the etc/installed-repo.txt file and run the script
+    # for each repository
+
+    while IFS= read -r REPO || [ -n "$REPO" ]; do
+        # Skip empty lines or lines that start with # (comments)
+        if [ -z "$REPO" ] || [[ "$REPO" =~ ^# ]]; then
+            continue
+        fi
+
+        # Construct the path to the script for this REPO
+        SCRIPT="${VVG_BASEDIR}env/${REPO}/etc/inst-deps.sh"
+
+        # Check if the script exists
+        if [ -f "$SCRIPT" ]; then
+            # Run the script
+            echo "Sourcing $SCRIPT..."
+            source "$SCRIPT"
+        else
+            echo "Warning: Script $SCRIPT does not exist."
+        fi
+    done < "etc/installed-repo.txt"
+else
+    echo "Error: etc/installed-repo.txt does not exist."
+    for REPO in $VVG_BASEDIR/envs/*; do
+        if [ -d "$REPO" ]; then
+            # Construct the path to the script for this REPO
+            SCRIPT="${VVG_BASEDIR}env/${REPO}/etc/inst-deps.sh"
+
+            # Check if the script exists
+            if [ -f "$SCRIPT" ]; then
+                # Run the script
+                echo "Sourcing $SCRIPT..."
+                source "$SCRIPT"
+            else
+                echo "Warning: Script $SCRIPT does not exist."
+            fi
+        fi
+    done
+    unset REPO
+fi
+
+echo "Updating finished."
+
+# EOF
