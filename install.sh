@@ -190,6 +190,8 @@ ln -sr ${ENVS_DIR}/vvg-box/etc/bashrc ${ETC_DIR}/bashrc
 
 source ${ENVS_DIR}/vvg-box/etc/inst-scripts/inst-deps.sh
 
+echo "vvg-box" >> ${ETC_DIR}/installed-repo.txt
+
 echo
 echo "vivaxGEN Box (vvg-box) has been successfully installed."
 echo "To activate the environment, either run the activation script"
