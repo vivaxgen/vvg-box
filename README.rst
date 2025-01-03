@@ -47,7 +47,7 @@ or::
 
     VVGBOX/bin/shell
 
-To activate the environment with current shell (or for a job script)::
+To activate the environment with current shell or inside a job/bash script)::
 
     source VVGBOX/bin/activate
 
@@ -55,6 +55,10 @@ or (pay attention to the dot at the beginning of the line)::
 
     . VVGBOX/bin/activate
     
+To install Conda-based software to the active environment, use micromamba command, eg::
+
+    micromamba install software_name -c conda-forge -c defaults
+
 To run any installed software in the box without opening new shell nor sourcing
 the activation script (also for a job script), use the following pattern::
 
@@ -193,7 +197,7 @@ Files under ``opt/umamba`` is managed by micromamba, while the rest of files
 can be symbolic links to any repository in the ``envs/`` directory, which can
 be updated by pulling the respective repository.
 
-The vivaxGEN Base utility also provides some command line tools as follows:
+The vivaxGEN Box utility also provides some command line tools as follows:
 
 ``export-environment.sh``
     This script can be used to export the micromamba environment files.
@@ -211,12 +215,12 @@ The vivaxGEN Base utility also provides some command line tools as follows:
     This script can be executed to update all cloned repository in the
     ``envs`` directory.
 
-After the Base utility environment has been activated, the above commands can
+After the Box utility environment has been activated, the above commands can
 be accessed using $VVGBIN environment variable, eg::
 
     $VVGBIN/update-pipeline.sh
 
-The installation script for vivaxGEN Base utility will also install the
+The installation script for vivaxGEN Box utility will also install the
 following software using micromamba with conda-forge channel (optional software
 will be installed unless the software are already installed in the system):
 
