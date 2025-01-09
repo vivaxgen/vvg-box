@@ -14,7 +14,7 @@ Cluster Profiles
 ----------------
 
 For information about cluster profiles (batch manager/job scheduler),
-go to `the Wiki <https://github.com/vivaxgen/vvg-base/wiki>`_.
+go to `the Wiki <https://github.com/vivaxgen/vvg-box/wiki>`_.
 
 
 Installation
@@ -63,6 +63,9 @@ To run any installed software in the box without opening new shell nor sourcing
 the activation script (also for a job script), use the following pattern::
 
     VVGBOX/bin/exec myprog --argument ...
+
+To add additional environment variables (such as adding $PATH) when the environment
+is activated, please see the section about etc/bashrc.d below.
 
 
 Quick Overview
@@ -163,17 +166,17 @@ Information about each file/directory in the base layout is as follow:
 
 ``envs/``
     This directory hold repositories cloned from git repositories such as
-    github, including the vvg-base itself.
+    github, including the vvg-box itself.
     Other repositories (such as various pipelines) need to be cloned here.
 
-``envs/vvg-base/``
-    This is the repository of ``vvg-base`` cloned from github repository.
+``envs/vvg-box/``
+    This is the repository of ``vvg-box`` cloned from github repository.
 
 ``etc/bashrc``
     This is the main source file, which is needed to be sourced first
     before using the installed software (``bin/activate`` sources this file
     automatically).
-    This file is normally a symbolic link to ``envs/vvg-base/etc/bashrc``
+    This file is normally a symbolic link to ``envs/vvg-box/etc/bashrc``
 
 ``etc/bashrc.d``
     This directory contains bash resource files to be sourced in an
