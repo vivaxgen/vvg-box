@@ -4,6 +4,35 @@
 # since the inst-deps.sh script may need to set environment variables
 # required for the next inst-deps.sh script to run
 
+# prepare the environment to mimic installation environment
+
+# functions
+# taken from https://gist.github.com/sj26/88e1c6584397bb7c13bd11108a579746
+function retry {
+  local retries=$1
+  shift
+
+  local count=0
+  until "$@"; do
+    exit=$?
+    wait=$((2 ** $count))
+    count=$(($count + 1))
+    if [ $count -lt $retries ]; then
+      echo "Retry $count/$retries exited $exit, retrying in $wait seconds..."
+      sleep $wait
+    else
+      echo "Retry $count/$retries exited $exit, no more retries left."
+      return $exit
+    fi
+  done
+  return 0
+}
+
+# env vars
+
+export ENVS_DIR=${VVG_BASEDIR}/envs
+export BASEDIR=${VVG_BASEDIR}
+
 # if VVG_PULL_WITHOUT_TAG is set, then all pulls are not using tag
 
 echo "Updating all repositories under $VVG_BASEDIR/envs..."
@@ -56,7 +85,7 @@ else
     for REPO in $VVG_BASEDIR/envs/*; do
         if [ -d "$REPO" ]; then
             # Construct the path to the script for this REPO
-            SCRIPT="${VVG_BASEDIR}env/${REPO}/etc/inst-deps.sh"
+            SCRIPT="${REPO}/etc/inst-scripts/inst-deps.sh"
 
             # Check if the script exists
             if [ -f "$SCRIPT" ]; then
