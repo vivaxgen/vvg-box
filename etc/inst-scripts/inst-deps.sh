@@ -1,5 +1,5 @@
 # install other dependencies with micromamba
-micromamba install -f ${ENVS_DIR}/vvg-box/etc/inst-scripts/env.yaml
+micromamba -y install -f ${ENVS_DIR}/vvg-box/etc/inst-scripts/env.yaml
 
 # prepare activation file
 echo "Preparing activation source file"
