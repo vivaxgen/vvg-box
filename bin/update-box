@@ -117,7 +117,7 @@ if [ -f "${VVG_BASEDIR}/etc/installed-repo.txt" ]; then
         fi
 
         # Construct the path to the script for this REPO
-        SCRIPT="${VVG_BASEDIR}/env/${REPO}/etc/inst-deps.sh"
+        SCRIPT="${VVG_BASEDIR}/envs/${REPO}/etc/inst-scripts/inst-deps.sh"
 
         # Check if the script exists
         if [ -f "$SCRIPT" ]; then
