@@ -1,15 +1,5 @@
-
-# install Mamba to complement Micromamba since Snakemake currently can not directly
-# handle Micromamba
-echo "Installing Mamba"
-retry 5 micromamba -y install mamba -c conda-forge -c defaults
-
-PYVER=${PYVER:-3.12}
-echo "Installing base python ${PYVER}"
-retry 5 micromamba -y install python=${PYVER} -c conda-forge -c defaults
-
-echo "Installing Snakemake"
-retry 5 pip3 install "snakemake<9" snakemake-executor-plugin-cluster-generic
+# install other dependencies with micromamba
+retry 5 micromamba -y install -n ${uMAMBA_ENVNAME} -f ${ENVS_DIR}/vvg-box/etc/inst-scripts/env.yaml
 
 # prepare activation file
 echo "Preparing activation source file"

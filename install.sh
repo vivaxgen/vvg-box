@@ -160,31 +160,32 @@ micromamba activate ${uMAMBA_ENVNAME}
 
 if ! [ -x "$(command -v git)" ]; then
   echo "Installing git"
-  micromamba -y install git -c conda-forge
+  micromamba -y install "git>=2.49,<3" -c conda-forge
 fi
 
 if ! [ -x "$(command -v readlink)" ]; then
   echo "Installing coreutils"
-  micromamba -y install coreutils -c conda-forge -c defaults
+  micromamba -y install "coreutils>=9.5,<10" -c conda-forge -c defaults
 fi
 
 if ! [ -x "$(command -v parallel)" ]; then
   echo "Installing parallel"
-  micromamba -y install parallel -c conda-forge -c defaults
+  micromamba -y install "parallel>=20250422,<20260101" -c conda-forge -c defaults
 fi
 
 if ! ([ -x "$(command -v cc)" ] && [ -x "$(command -v ar)" ]); then
   echo "Installing essential c-compiler"
-  retry 5 micromamba -y install c-compiler -c conda-forge
+  retry 5 micromamba -y install "c-compiler>=1.9.0,<2" -c conda-forge
 fi
 
 if ! ([ -x "$(command -v c++)" ] && [ -x "$(command -v ar)" ]); then
   echo "Installing essential cxx-compiler"
-  retry 5 micromamba -y install cxx-compiler -c conda-forge
+  retry 5 micromamba -y install "cxx-compiler>=1.9.0,<2" -c conda-forge
 fi
 
 # install vvg-box repo
 echo "Cloning vivaxGEN vvg-box repository"
+# For dev: add --branch dev
 git clone --depth 1 https://github.com/vivaxgen/vvg-box.git ${ENVS_DIR}/vvg-box
 ln -sr ${ENVS_DIR}/vvg-box/etc/bashrc ${ETC_DIR}/bashrc
 
