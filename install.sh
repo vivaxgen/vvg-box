@@ -185,7 +185,8 @@ fi
 
 # install vvg-box repo
 echo "Cloning vivaxGEN vvg-box repository"
-git clone --branch dev --depth 1 https://github.com/vivaxgen/vvg-box.git ${ENVS_DIR}/vvg-box
+# For dev: add --branch dev
+git clone --depth 1 https://github.com/vivaxgen/vvg-box.git ${ENVS_DIR}/vvg-box
 ln -sr ${ENVS_DIR}/vvg-box/etc/bashrc ${ETC_DIR}/bashrc
 
 source ${ENVS_DIR}/vvg-box/etc/inst-scripts/inst-deps.sh
