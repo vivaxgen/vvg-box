@@ -18,41 +18,89 @@ function retry {
     wait=$((2 ** $count))
     count=$(($count + 1))
     if [ $count -lt $retries ]; then
-      echo "Retry $count/$retries exited $exit, retrying in $wait seconds..."
+      echo "Retry $count/$retries exited $exit, retrying in $wait seconds..." >&2
       sleep $wait
     else
-      echo "Retry $count/$retries exited $exit, no more retries left."
+      echo "Retry $count/$retries exited $exit, no more retries left." >&2
       return $exit
     fi
   done
   return 0
 }
 
+
+# command line argument
+PULL_REPO_ONLY=false
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --pull-repo-only)
+      PULL_REPO_ONLY=true
+      shift
+      ;;
+    *)
+      echo "Unknown argument: $1" >&2
+      exit 1
+      ;;
+  esac
+done
+
+
 # env vars
+
+# Check if VVG_BASEDIR is set
+if [ -z "$VVG_BASEDIR" ]; then
+    echo "Error: VVG_BASEDIR environment variable is not set." >&2
+    exit 1
+fi
 
 export ENVS_DIR=${VVG_BASEDIR}/envs
 export BASEDIR=${VVG_BASEDIR}
 
 # if VVG_PULL_WITHOUT_TAG is set, then all pulls are not using tag
 
-echo "Updating all repositories under $VVG_BASEDIR/envs..."
+echo "Updating all repositories under $VVG_BASEDIR/envs..." >&2
 for p in $VVG_BASEDIR/envs/*; do
+    # Check if the path is a directory
     if [ -d "$p" ]; then
-        echo "Updating ${p}"
+        echo "Updating ${p}" >&2
         (
             cd "$p";
+            # Check if the directory is a git repository
+            if [ -d ".git" ]; then
+                echo "Updating ${p} git repository" >&2
+            else
+                echo "Not a git repository, skipping ${p}" >&2
+                continue
+            fi
+            # Check if repository has tag
             if [ -z "${VVG_PULL_WITHOUT_TAG+x}" ] && [ -f ".git-pull-tag" ]; then
                 tag=$(<.git-pull-tag)
-                echo "Pulling from main ${tag}"
-                git pull origin "${tag}";
+                if [ -n "$tag" ]; then
+                    echo "Pulling from main ${tag}" >&2
+                    if ! git pull origin "${tag}"; then
+                        echo "Error: Failed to pull from ${tag}" >&2
+                    fi
+                else
+                    echo "Warning: empty tag, pulling from main" >&2
+                    if ! git pull; then
+                        echo "Error: Failed to pull from main" >&2
+                    fi
+                fi
             else
-                echo "Pulling from main"
-                git pull;
+                echo "Pulling from main" >&2
+                if ! git pull; then
+                    echo "Error: Failed to pull from main" >&2
+                fi
             fi
         )
     fi
 done
 unset p
+
+if [ "$PULL_REPO_ONLY" = true ]; then
+    echo "Pulling repositories only, skipping etc/inst-scripts/inst-deps.sh" >&2
+    exit 0
+fi
 
 # check for existence of etc/installed-repo.txt to perform etc/inst-script/int-deps.sh in order
 # otherwise, just perform in alphanumeric order
@@ -69,19 +117,27 @@ if [ -f "${VVG_BASEDIR}/etc/installed-repo.txt" ]; then
         fi
 
         # Construct the path to the script for this REPO
-        SCRIPT="${VVG_BASEDIR}env/${REPO}/etc/inst-deps.sh"
+        SCRIPT="${VVG_BASEDIR}/envs/${REPO}/etc/inst-scripts/inst-deps.sh"
 
         # Check if the script exists
         if [ -f "$SCRIPT" ]; then
             # Run the script
-            echo "Sourcing $SCRIPT..."
+            echo "Sourcing $SCRIPT..." >&2
+            # Use source instead of bash to run the script to ensure that
+            # any environment variables set in the script are available in the current shell
+            # and not in a subshell
             source "$SCRIPT"
         else
-            echo "Warning: Script $SCRIPT does not exist."
+            echo "Warning: Script $SCRIPT does not exist." >&2
         fi
-    done < "etc/installed-repo.txt"
+    done < "${VVG_BASEDIR}/etc/installed-repo.txt"
 else
-    echo "Error: etc/installed-repo.txt does not exist."
+    echo "Warning: ${VVG_BASEDIR}/etc/installed-repo.txt does not exist." >&2
+    echo "Running all etc/inst-scripts/inst-deps.sh in alphanumeric order..." >&2
+    # Loop through each repository in the envs directory
+    # and run the etc/inst-scripts/inst-deps.sh script
+    # for each repository
+
     for REPO in $VVG_BASEDIR/envs/*; do
         if [ -d "$REPO" ]; then
             # Construct the path to the script for this REPO
@@ -90,16 +146,16 @@ else
             # Check if the script exists
             if [ -f "$SCRIPT" ]; then
                 # Run the script
-                echo "Sourcing $SCRIPT..."
+                echo "Sourcing $SCRIPT..." >&2
                 source "$SCRIPT"
             else
-                echo "Warning: Script $SCRIPT does not exist."
+                echo "Warning: Script $SCRIPT does not exist." >&2
             fi
         fi
     done
     unset REPO
 fi
 
-echo "Updating finished."
+echo "Updating finished." >&2
 
 # EOF
