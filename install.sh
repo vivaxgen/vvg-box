@@ -170,7 +170,7 @@ fi
 
 if ! [ -x "$(command -v parallel)" ]; then
   echo "Installing parallel"
-  micromamba -y install "parallel>=20250422,<20260101" -c conda-forge -c defaults
+  micromamba -y install "parallel==20250422|20200322" -c conda-forge -c defaults
 fi
 
 if ! ([ -x "$(command -v cc)" ] && [ -x "$(command -v ar)" ]); then
