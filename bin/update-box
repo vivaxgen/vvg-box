@@ -30,6 +30,16 @@ function retry {
 
 
 # command line argument
+show_help() {
+        cat <<'EOF'
+Usage: update-box [OPTIONS]
+
+Options:
+    --pull-repo-only    Pull repositories only, skip dependency scripts.
+    -h, --help          Show this help message and exit.
+EOF
+}
+
 PULL_REPO_ONLY=false
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -37,8 +47,13 @@ while [ "$#" -gt 0 ]; do
       PULL_REPO_ONLY=true
       shift
       ;;
+    -h|--help)
+        show_help
+        exit 0
+        ;;
     *)
       echo "Unknown argument: $1" >&2
+            echo "Run 'update-box --help' to see available options." >&2
       exit 1
       ;;
   esac
