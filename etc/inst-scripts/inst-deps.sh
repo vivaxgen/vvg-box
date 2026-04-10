@@ -13,6 +13,7 @@ source ${VVG_BASEDIR}/etc/bashrc
 
 # all the following run under active vvg-box environment
 ${VVGBIN}/generate-executable-links.py
+${VVGBIN}/link-resource-files.sh
 
 # check if we are provided with SPECDIR
 if [[ -z ${SPECDIR:-} ]]; then
