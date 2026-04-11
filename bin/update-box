@@ -31,18 +31,24 @@ function retry {
 
 # command line argument
 show_help() {
-        cat <<'EOF'
+    cat <<'EOF'
 Usage: update-box [OPTIONS]
 
 Options:
+    --all               Pull repositories and run dependency scripts.
     --pull-repo-only    Pull repositories only, skip dependency scripts.
     -h, --help          Show this help message and exit.
 EOF
 }
 
+RUN_ALL=false
 PULL_REPO_ONLY=false
 while [ "$#" -gt 0 ]; do
   case "$1" in
+    --all)
+        RUN_ALL=true
+        shift
+        ;;
     --pull-repo-only)
       PULL_REPO_ONLY=true
       shift
@@ -58,6 +64,18 @@ while [ "$#" -gt 0 ]; do
       ;;
   esac
 done
+
+if [ "$RUN_ALL" = true ] && [ "$PULL_REPO_ONLY" = true ]; then
+    echo "Error: --all and --pull-repo-only cannot be used together." >&2
+    echo "Run 'update-box --help' to see available options." >&2
+    exit 1
+fi
+
+if [ "$RUN_ALL" != true ] && [ "$PULL_REPO_ONLY" != true ]; then
+    echo "Error: Please specify one mode: --all or --pull-repo-only." >&2
+    echo "Run 'update-box --help' to see available options." >&2
+    exit 1
+fi
 
 
 # env vars
@@ -116,6 +134,8 @@ if [ "$PULL_REPO_ONLY" = true ]; then
     echo "Pulling repositories only, skipping etc/inst-scripts/inst-deps.sh" >&2
     exit 0
 fi
+
+# only do this when --all is specified, otherwise just pull the repositories and skip the dependency scripts
 
 # check for existence of etc/installed-repo.txt to perform etc/inst-script/int-deps.sh in order
 # otherwise, just perform in alphanumeric order
