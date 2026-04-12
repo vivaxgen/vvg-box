@@ -1,0 +1,7 @@
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - pip:
+    - "snakemake>=9.19,<9.20"
+    - "snakemake-executor-plugin-cluster-generic>=1.0.9,<1.1"
