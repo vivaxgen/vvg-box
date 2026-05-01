@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+# add helper function
+repeat() { while :; do "$@" && return; sleep 5; done }
+
+# taken from https://gist.github.com/sj26/88e1c6584397bb7c13bd11108a579746
+retry() {
+  local retries="$1"
+  shift
+
+  local count=0
+  until "$@"; do
+    exit=$?
+    wait=$((2 ** count))
+    count=$((count + 1))
+    if [ "$count" -lt "$retries" ]; then
+      echo "Retry $count/$retries exited $exit, retrying in $wait seconds..."
+      sleep "$wait"
+    else
+      echo "Retry $count/$retries exited $exit, no more retries left."
+      return $exit
+    fi
+  done
+  return 0
+}
+
+
+# usage: defined_and_contains_any EXCLUDE snakemake c++ c
+defined_and_contains_any() {
+    # Check if the variable name is actually set
+    [[ -v "$1" ]] || return 1
+
+    local _target_name="$1"
+    shift
+    
+    # Use indirect expansion (!) to get the value of the variable name
+    # This is more compatible and avoids nameref self-reference errors
+    local _value="${!_target_name}"
+
+    # Loop through remaining arguments (substrings)
+    local _sub
+    for _sub in "$@"; do
+        if [[ "$_value" == *"$_sub"* ]]; then
+            return 0
+        fi
+    done
+
+    return 1
+}
+
+# EOF
