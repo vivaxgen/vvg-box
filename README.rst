@@ -34,6 +34,8 @@ Optional enviroment variable that can be supplied for the above commands are:
 
 - BASEDIR
 
+- OMIT
+
 Usage
 -----
 
@@ -129,7 +131,9 @@ installation::
                      vvg-box/
                 etc/
                     bashrc -> ../vvg-box/etc/bashrc
-                    bashrc.d
+                    bashrc.d/
+                    inst-envvars
+
 
 Information about each file/directory in the base layout is as follow:
 
@@ -192,6 +196,11 @@ Information about each file/directory in the base layout is as follow:
     Other global settings that can be modified by users should use number
     starting from ``90-``, eg. the snakemake job scheduler profile setting
     is ``99-snakemake-profiles``.
+
+``etc/inst-envvars``
+    This file contains the environment variables that were set during the
+    installation, anc can be sourced for updating the dependencies, etc.
+
 
 The layout has been designed so that the number of files that are not managed
 is very minimal (only ``bin/activate``, ``bin/micromamba`` and
