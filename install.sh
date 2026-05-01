@@ -20,9 +20,6 @@ if [[ ${CONDA_SHLVL:-} -ge 1 ]]; then
   exit 1
 fi
 
-
-
-
 # Detect the shell from which the script was called
 parent=$(ps -o comm $PPID |tail -1)
 parent=${parent#-}  # remove the leading dash that login shells have
@@ -53,6 +50,9 @@ export BASEDIR="${BASEDIR:-./vvg-box}"
 BINDIR="${BASEDIR}/bin"
 export uMAMBA_ENVNAME="${uMAMBA_ENVNAME:-vvg-box}"
 uMAMBA_DIR="${BASEDIR}/opt/umamba"
+
+# defaults
+PYVER="${PYVER:-3.12}"
 
 mkdir -p "${BINDIR}"
 
@@ -91,6 +91,7 @@ fi
 
 
 # Downloading artifact
+echo "Downloading and installing micromamba..."
 mkdir -p "${BINDIR}"
 if hash curl >/dev/null 2>&1; then
   if [ -n "${CURL_OPTS:-}" ]; then
@@ -192,4 +193,5 @@ echo "example:"
 echo
 echo "    $(realpath "${BINDIR}")/exec micromamba list"
 echo
+
 # EOF

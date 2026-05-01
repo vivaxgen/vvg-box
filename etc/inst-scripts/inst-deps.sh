@@ -22,7 +22,7 @@ if ! ([ -x "$(command -v c++)" ] && [ -x "$(command -v ar)" ]) || defined_and_co
 fi
 
 # install other dependencies with micromamba
-retry 5 micromamba -y install -n ${uMAMBA_ENVNAME} -f ${ENVS_DIR}/vvg-box/etc/inst-scripts/env.yaml
+retry 5 micromamba -y install -n ${uMAMBA_ENVNAME} -f ${ENVS_DIR}/vvg-box/etc/inst-scripts/env.yaml python=${PYVER}
 
 # check if EXCLUDE variable is not set or if it does not contain "snakemake"
 
