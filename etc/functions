@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo "Helper functions from vvg-box repository is being sourced..."
+
 # add helper function
 repeat() { while :; do "$@" && return; sleep 5; done }
 
