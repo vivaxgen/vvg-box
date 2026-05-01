@@ -34,6 +34,10 @@ Optional enviroment variable that can be supplied for the above commands are:
 
 - BASEDIR
 
+- EXCLUDE
+
+- INCLUDE
+
 - OMIT
 
 Usage
