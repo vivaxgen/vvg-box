@@ -1,13 +1,13 @@
 # install other dependencies with micromamba
 retry 5 micromamba -y install -n ${uMAMBA_ENVNAME} -f ${ENVS_DIR}/vvg-box/etc/inst-scripts/env.yaml
 
-# check if OMIT variable is not set or if it does not contain "snakemake"
+# check if EXCLUDE variable is not set or if it does not contain "snakemake"
 
-if [[ -z ${OMIT:-} ]] || [[ ! ${OMIT} == *"snakemake"* ]]; then
+if [[ -z ${EXCLUDE:-} ]] || [[ ! ${EXCLUDE} == *"snakemake"* ]]; then
   echo "Installing snakemake and related dependencies"
   retry 5 micromamba -y install -n ${uMAMBA_ENVNAME} -f ${ENVS_DIR}/vvg-box/etc/inst-scripts/env-2.yaml
 else
-  echo "snakemake is omitted, skipping installation"
+  echo "snakemake is excluded, skipping installation"
 fi
 
 # prepare activation file
