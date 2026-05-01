@@ -21,29 +21,7 @@ if [[ ${CONDA_SHLVL:-} -ge 1 ]]; then
 fi
 
 
-# add helper function
-repeat() { while :; do "$@" && return; sleep 5; done }
 
-# taken from https://gist.github.com/sj26/88e1c6584397bb7c13bd11108a579746
-retry() {
-  local retries="$1"
-  shift
-
-  local count=0
-  until "$@"; do
-    exit=$?
-    wait=$((2 ** count))
-    count=$((count + 1))
-    if [ "$count" -lt "$retries" ]; then
-      echo "Retry $count/$retries exited $exit, retrying in $wait seconds..."
-      sleep "$wait"
-    else
-      echo "Retry $count/$retries exited $exit, no more retries left."
-      return $exit
-    fi
-  done
-  return 0
-}
 
 # Detect the shell from which the script was called
 parent=$(ps -o comm $PPID |tail -1)
@@ -151,6 +129,8 @@ mkdir "${ETC_DIR}"
 mkdir "${BASHRC_DIR}"
 mkdir "${SNAKEMAKEPROFILE_DIR}"
 
+echo "vvg-box" >> "${ETC_DIR}"/installed-repo.txt
+
 # save installation environment variables
 # other installation scripts can append this file
 
@@ -182,35 +162,16 @@ if ! [ -x "$(command -v git)" ]; then
   micromamba -y install "git>=2.49,<3" -c conda-forge
 fi
 
-if ! [ -x "$(command -v readlink)" ]; then
-  echo "Installing coreutils"
-  micromamba -y install "coreutils>=9.5,<10" -c conda-forge -c defaults
-fi
-
-if ! [ -x "$(command -v parallel)" ]; then
-  echo "Installing parallel"
-  micromamba -y install "parallel==20250422|20200322" -c conda-forge -c defaults
-fi
-
-if ! ([ -x "$(command -v cc)" ] && [ -x "$(command -v ar)" ]); then
-  echo "Installing essential c-compiler"
-  retry 5 micromamba -y install "c-compiler>=1.9.0,<2" -c conda-forge
-fi
-
-if ! ([ -x "$(command -v c++)" ] && [ -x "$(command -v ar)" ]); then
-  echo "Installing essential cxx-compiler"
-  retry 5 micromamba -y install "cxx-compiler>=1.9.0,<2" -c conda-forge
-fi
-
-# install vvg-box repo
+# install vvg-box repo as early as possible, so that we can use its helper functions in subsequent installation scripts
 echo "Cloning vivaxGEN vvg-box repository"
 # For dev: add --branch dev
 git clone --depth 1 https://github.com/vivaxgen/vvg-box.git "${ENVS_DIR}"/vvg-box
 ln -sr "${ENVS_DIR}"/vvg-box/etc/bashrc "${ETC_DIR}"/bashrc
 
-source "${ENVS_DIR}"/vvg-box/etc/inst-scripts/inst-deps.sh
+# source the helper functions for use in this script
+source "${ENVS_DIR}"/vvg-box/etc/functions
 
-echo "vvg-box" >> "${ETC_DIR}"/installed-repo.txt
+source "${ENVS_DIR}"/vvg-box/etc/inst-scripts/inst-deps.sh
 
 echo
 echo "vivaxGEN Box (vvg-box) has been successfully installed."
