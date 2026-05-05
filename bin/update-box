@@ -4,31 +4,6 @@
 # since the inst-deps.sh script may need to set environment variables
 # required for the next inst-deps.sh script to run
 
-# prepare the environment to mimic installation environment
-
-# functions
-# taken from https://gist.github.com/sj26/88e1c6584397bb7c13bd11108a579746
-function retry {
-  local retries=$1
-  shift
-
-  local count=0
-  until "$@"; do
-    exit=$?
-    wait=$((2 ** $count))
-    count=$(($count + 1))
-    if [ $count -lt $retries ]; then
-      echo "Retry $count/$retries exited $exit, retrying in $wait seconds..." >&2
-      sleep $wait
-    else
-      echo "Retry $count/$retries exited $exit, no more retries left." >&2
-      return $exit
-    fi
-  done
-  return 0
-}
-
-
 # command line argument
 show_help() {
     cat <<'EOF'
@@ -78,7 +53,7 @@ if [ "$RUN_ALL" != true ] && [ "$PULL_REPO_ONLY" != true ]; then
 fi
 
 
-# env vars
+# prepare the environment (eg. environment variables)to mimic installation environment
 
 # Check if VVG_BASEDIR is set
 if [ -z "$VVG_BASEDIR" ]; then
@@ -88,6 +63,14 @@ fi
 
 export ENVS_DIR=${VVG_BASEDIR}/envs
 export BASEDIR=${VVG_BASEDIR}
+
+# source the helper functions for use in this script
+if [ -f "${ENVS_DIR}/vvg-box/etc/functions" ]; then
+    source "${ENVS_DIR}/vvg-box/etc/functions"
+else
+    echo "Error: Helper functions file ${ENVS_DIR}/vvg-box/etc/functions not found." >&2
+    exit 1
+fi
 
 # if VVG_PULL_WITHOUT_TAG is set, then all pulls are not using tag
 
