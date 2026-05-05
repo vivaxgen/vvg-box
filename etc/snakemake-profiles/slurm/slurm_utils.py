@@ -16,7 +16,7 @@ from io import StringIO
 from CookieCutter import CookieCutter
 from snakemake import io
 from snakemake.exceptions import WorkflowError
-from snakemake.io import Wildcards
+from snakemake.iocontainers import Wildcards
 from snakemake.logging import logger
 from snakemake.utils import AlwaysQuotedFormatter
 from snakemake.utils import QuotedFormatter
