@@ -3,32 +3,32 @@
 # install core dependencies for vvg-box installation
 if ! [ -x "$(command -v readlink)" ] || defined_and_contains_any INCLUDE coreutils; then
   echo "Installing coreutils"
-  micromamba -y install "coreutils>=9.5,<10" -c conda-forge -c defaults
+  micromamba -y install "coreutils>=9.5,<10" -c conda-forge --override-channels
 fi
 
 if ! [ -x "$(command -v parallel)" ] || defined_and_contains_any INCLUDE parallel; then
   echo "Installing parallel"
-  micromamba -y install "parallel==20250422|20200322" -c conda-forge -c defaults
+  micromamba -y install "parallel==20250422|20200322" -c conda-forge --override-channels
 fi
 
 if ! ([ -x "$(command -v cc)" ] && [ -x "$(command -v ar)" ]) || defined_and_contains_any INCLUDE "c-compiler"; then
   echo "Installing essential c-compiler"
-  retry 5 micromamba -y install "c-compiler>=1.9.0,<2" -c conda-forge
+  retry 5 micromamba -y install "c-compiler>=1.9.0,<2" -c conda-forge --override-channels
 fi
 
 if ! ([ -x "$(command -v c++)" ] && [ -x "$(command -v ar)" ]) || defined_and_contains_any INCLUDE "cxx-compiler"; then
   echo "Installing essential cxx-compiler"
-  retry 5 micromamba -y install "cxx-compiler>=1.9.0,<2" -c conda-forge
+  retry 5 micromamba -y install "cxx-compiler>=1.9.0,<2" -c conda-forge --override-channels
 fi
 
 # install other dependencies with micromamba
-retry 5 micromamba -y install -n ${uMAMBA_ENVNAME} -f ${ENVS_DIR}/vvg-box/etc/inst-scripts/env.yaml python=${PYVER}
+retry 5 micromamba -y install -n ${uMAMBA_ENVNAME} -f ${ENVS_DIR}/vvg-box/etc/inst-scripts/env.yaml python=${PYVER} -c conda-forge --override-channels
 
 # check if EXCLUDE variable is not set or if it does not contain "snakemake"
 
 if [[ -z ${EXCLUDE:-} ]] || [[ ! ${EXCLUDE} == *"snakemake"* ]]; then
   echo "Installing snakemake and related dependencies"
-  retry 5 micromamba -y install -n ${uMAMBA_ENVNAME} -f ${ENVS_DIR}/vvg-box/etc/inst-scripts/env-2.yaml
+  retry 5 micromamba -y install -n ${uMAMBA_ENVNAME} -f ${ENVS_DIR}/vvg-box/etc/inst-scripts/env-2.yaml -c conda-forge --override-channels
 else
   echo "snakemake is excluded, skipping installation"
 fi
