@@ -166,7 +166,11 @@ fi
 # install vvg-box repo as early as possible, so that we can use its helper functions in subsequent installation scripts
 echo "Cloning vivaxGEN vvg-box repository"
 # For dev: add --branch dev
-git clone --depth 1 https://github.com/vivaxgen/vvg-box.git "${ENVS_DIR}"/vvg-box
+
+# VVG_URLREPO can be set to a custom repository URL, for example to install from a fork or a specific branch
+VVG_URLREPO="${VVG_URLREPO:-https://github.com/vivaxgen/vvg-box.git}"
+
+git clone --depth 1 "${VVG_URLREPO}" "${ENVS_DIR}"/vvg-box
 ln -sr "${ENVS_DIR}"/vvg-box/etc/bashrc "${ETC_DIR}"/bashrc
 
 # source the helper functions for use in this script
