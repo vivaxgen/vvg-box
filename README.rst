@@ -40,6 +40,8 @@ Optional enviroment variable that can be supplied for the above commands are:
 
 - OMIT
 
+- VVG_URLREPO
+
 Usage
 -----
 
