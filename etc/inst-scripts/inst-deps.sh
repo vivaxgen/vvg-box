@@ -32,7 +32,7 @@ else
 fi
 
 # install other dependencies with pixi
-retry 5 pixi add python=${PYVER} -c conda-forge
+retry 5 pixi add python=${PYVER}
 
 
 # check if EXCLUDE variable is not set or if it does not contain "snakemake"
