@@ -2,33 +2,31 @@
 
 # required exported environment
 #   VVG_BASEDIR
-#   MAMBA_ROOT_PREFIX
-#   uMAMBA_ENVNAME
+#   PIXI_ENVNAME
 
-# required non-exported environment
-#   BASHRC
 
 # optional environment
+#   BASHRC
 #   SPAWN_SHELL
+#   VVG_SILENT
 
-if [ ${SPAWN_SHELL:-0} -ge 1 ]; then
+#set -euo pipefail
 
-    SPAWN_SHELL=0
-    set -euo pipefail
+BASHRC="${BASHRC:-"${VVG_BASEDIR}/etc/bashrc"}"
+
+if [ "${SPAWN_SHELL:-0}" -ge 1 ]; then
+    export SPAWN_SHELL=0
 
     echo "Spawning new non-login interactive shell..."
-    exec bash --init-file <(echo "
-    	. ~/.bashrc
-        . ${BASHRC}
-    ")
-
+    # Use cat for better readability and easier quoting
+    exec bash --init-file <(cat <<EOF
+        [ -f ~/.bashrc ] && . ~/.bashrc
+        [ -f "${BASHRC}" ] && . "${BASHRC}"
+EOF
+    )
 else
-
-    if [[ -z "$VVG_SILENT" || "$VVG_SILENT" != "1" ]]; then
-	    echo "Sourcing current interactive shell..."
-    fi
-    . ${BASHRC}
-
+    [[ "${VVG_SILENT:-0}" != "1" ]] && echo "Sourcing environment..."
+    [ -f "${BASHRC}" ] && . "${BASHRC}"
 fi
 
 # EOF
