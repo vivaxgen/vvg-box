@@ -1,7 +1,6 @@
 
 
-# -- base activation source script from install/base.sh --
-# -- [https://github.com/vivaxgen/install] --
+# -- base activation source script --
 
 # required environment variables
 #   VVG_BASEDIR
@@ -11,14 +10,18 @@
 #   VVG_PROMPT
 
 PATH=${VVG_BASEDIR}/bin:${PATH}
-export PIXI_HOME=${VVG_BASEDIR}/opt/pixi/global
+PIXI_DIR=${VVG_BASEDIR}/opt/pixi
+VVG_PIXI_WORKSPACE_DIR=${PIXI_DIR}/${PIXI_ENVNAME}
+export PIXI_HOME=${PIXI_DIR}/global
 export PIXI_CACHE_DIR=${PIXI_HOME}/.cache
 export PIP_CACHE_DIR=${PIXI_HOME}/.cache-pip
 export RATTLER_AUTH_FILE=${PIXI_HOME}/.rattler-credentials.json
 export APPTAINER_DIR=${VVG_BASEDIR}/opt/apptainer
+PATH=${PIXI_HOME}/bin:${PATH}
 
 if [[ -z ${__IN_VVG_INSTALLATION__:-} ]]; then
-  eval "$(pixi shell-hook --manifest-path "${VVG_BASEDIR}/opt/pixi/${PIXI_ENVNAME}/pixi.toml")"
+  # not inside installation session, so we can activate pixi 
+  eval "$(pixi shell-hook --manifest-path "${VVG_PIXI_WORKSPACE_DIR}/pixi.toml")"
 fi
 
 # from this point, readlink and dirname are already available
