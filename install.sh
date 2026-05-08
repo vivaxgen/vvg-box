@@ -106,13 +106,6 @@ pixi init ${VVG_PIXI_WORKSPACE_DIR}
 echo "Activating pixi environment ${PIXI_ENVNAME}"
 eval "$(pixi shell-hook --manifest-path "${VVG_PIXI_WORKSPACE_DIR}/pixi.toml")"
 
-#eval "$("${BINDIR}"/micromamba shell hook -s posix)"
-#echo "Creating ${uMAMBA_ENVNAME} environment"
-#micromamba create -n "${uMAMBA_ENVNAME}"
-
-#echo "Activating micromamba base environment"
-#micromamba activate "${uMAMBA_ENVNAME}"
-
 if ! [ -x "$(command -v git)" ]; then
   echo "Installing git"
   pixi global install --environment core "git>=2.49,<3" -c conda-forge

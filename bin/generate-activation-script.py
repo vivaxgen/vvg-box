@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# this script requires BASEDIR and uMAMBA_ENVNAME environment to be set
+# this script requires VVG_BASEDIR and PIXI_ENVNAME environment to be set
 
 import os
 import argparse
