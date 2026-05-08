@@ -1,34 +1,46 @@
 #!/bin/bash
 
+CORE_PACKAGES=""
+
 # install core dependencies for vvg-box installation
 if ! [ -x "$(command -v readlink)" ] || defined_and_contains_any INCLUDE coreutils; then
-  echo "Installing coreutils"
-  micromamba -y install "coreutils>=9.5,<10" -c conda-forge --override-channels
+  echo "Will add coreutils"
+  CORE_PACKAGES="${CORE_PACKAGES} coreutils>=9.5,<10"
 fi
 
 if ! [ -x "$(command -v parallel)" ] || defined_and_contains_any INCLUDE parallel; then
-  echo "Installing parallel"
-  micromamba -y install "parallel==20250422|20200322" -c conda-forge --override-channels
+  echo "Will add parallel"
+  CORE_PACKAGES="${CORE_PACKAGES} parallel==20250422|20200322"
 fi
 
 if ! ([ -x "$(command -v cc)" ] && [ -x "$(command -v ar)" ]) || defined_and_contains_any INCLUDE "c-compiler"; then
-  echo "Installing essential c-compiler"
-  retry 5 micromamba -y install "c-compiler>=1.9.0,<2" -c conda-forge --override-channels
+  echo "Will add c-compiler"
+  CORE_PACKAGES="${CORE_PACKAGES} gcc"
 fi
 
 if ! ([ -x "$(command -v c++)" ] && [ -x "$(command -v ar)" ]) || defined_and_contains_any INCLUDE "cxx-compiler"; then
-  echo "Installing essential cxx-compiler"
-  retry 5 micromamba -y install "cxx-compiler>=1.9.0,<2" -c conda-forge --override-channels
+  echo "Will add cxx-compiler"
+  CORE_PACKAGES="${CORE_PACKAGES} gxx"
 fi
 
-# install other dependencies with micromamba
-retry 5 micromamba -y install -n ${uMAMBA_ENVNAME} -f ${ENVS_DIR}/vvg-box/etc/inst-scripts/env.yaml python=${PYVER} -c conda-forge --override-channels
+# if CORE_PACKAGES is not empty, install the packages with pixi
+if [[ -n "${CORE_PACKAGES}" ]]; then
+  echo "Installing core dependencies: ${CORE_PACKAGES}"
+  retry 5 pixi global install ${CORE_PACKAGES} --environment core
+else
+  echo "All vvg-box core dependencies are already satisfied, skipping installation"
+fi
+
+# install other dependencies with pixi
+retry 5 pixi add python=${PYVER} -c conda-forge
+
 
 # check if EXCLUDE variable is not set or if it does not contain "snakemake"
 
 if [[ -z ${EXCLUDE:-} ]] || [[ ! ${EXCLUDE} == *"snakemake"* ]]; then
   echo "Installing snakemake and related dependencies"
-  retry 5 micromamba -y install -n ${uMAMBA_ENVNAME} -f ${ENVS_DIR}/vvg-box/etc/inst-scripts/env-2.yaml -c conda-forge --override-channels
+  retry 5 pixi workspace add channel bioconda
+  retry 5 pixi add "snakemake>=9.20" snakemake-executor-plugin-cluster-generic
 else
   echo "snakemake is excluded, skipping installation"
 fi

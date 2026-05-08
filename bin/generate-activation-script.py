@@ -12,11 +12,9 @@ p = argparse.ArgumentParser()
 p.add_argument('-o', '--outfile', default='',
                help='activation file pathname')
 p.add_argument('-n', '--envname', default='',
-               help='micromamba environment name')
+               help='pixi workspace environment name')
 p.add_argument('-b', '--basedir', default='',
                help='vvg base directory')
-p.add_argument('-r', '--mamba-root', default='',
-               help='micromamba root directory prefix')
 p.add_argument('-e', '--extraenv', action='append', default=[],
                help='extra environment variable to be exported')
 p.add_argument('-l', '--extraline', action='append', default=[],
@@ -30,13 +28,8 @@ BASEDIR = (
     Path(args.basedir).resolve() if args.basedir else
     Path(os.environ['BASEDIR']).resolve()
 )
-MAMBA_ROOT_PREFIX = (
-    Path(args.mamba_root).resolve() if args.mamba_root else (
-        Path(pfx).resolve() if (pfx := os.environ.get('MAMBA_ROOT_PREFIX', '')) else
-        BASEDIR / 'opt' / 'umamba'
-    )
-)
-uMAMBA_ENVNAME = args.envname or os.environ['uMAMBA_ENVNAME']
+
+PIXI_ENVNAME = args.envname or os.environ['PIXI_ENVNAME']
 
 activation_file = (Path(args.outfile) if args.outfile
                    else BASEDIR / 'bin' / 'activate')
@@ -58,8 +51,12 @@ activation_content = f"""#!/usr/bin/env bash
 # GNU coreutils (which provides readlink and dirname commands) is already
 # installed
 export VVG_BASEDIR={BASEDIR.as_posix()}
-export MAMBA_ROOT_PREFIX={MAMBA_ROOT_PREFIX.as_posix()}
-export uMAMBA_ENVNAME={uMAMBA_ENVNAME}
+PIXI_DIR=${{VVG_BASEDIR}}/opt/pixi
+export PIXI_HOME=${{PIXI_DIR}}/global
+export PIXI_CACHE_DIR=${{PIXI_HOME}}/.cache
+export PIP_CACHE_DIR=${{PIXI_HOME}}/.cache-pip
+export RATTLER_AUTH_DIR=${{PIXI_HOME}}/.rattler-credentials.json
+export PIXI_ENVNAME={PIXI_ENVNAME}
 BASHRC=${{VVG_BASEDIR}}/etc/bashrc
 
 {'\n'.join(args.extraline)}
