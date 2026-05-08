@@ -26,7 +26,7 @@ args = p.parse_args()
 
 BASEDIR = (
     Path(args.basedir).resolve() if args.basedir else
-    Path(os.environ['BASEDIR']).resolve()
+    Path(os.environ['VVG_BASEDIR']).resolve()
 )
 
 PIXI_ENVNAME = args.envname or os.environ['PIXI_ENVNAME']
