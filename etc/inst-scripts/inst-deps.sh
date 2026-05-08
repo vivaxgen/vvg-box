@@ -51,7 +51,6 @@ ${ENVS_DIR}/vvg-box/bin/generate-activation-script.py
 
 # re-source activation script
 echo "Resourcing vvg-box environment"
-export VVG_BASEDIR=${BASEDIR}
 __IN_VVG_INSTALLATION__=1
 source ${VVG_BASEDIR}/etc/bashrc
 
