@@ -1,134 +1,91 @@
 #!/usr/bin/env bash
 
-# below is ripped-off from micro.mamba.pm/install.sh
-
 # optional env variables:
 # - BASEDIR
-# - MAMBA_ROOT_PREFIX
-# - uMAMBA_ENVNAME
+# - PIXI_ENVNAME
 # - PYVER
 
-__VERSION__='2026.05.01.01'
+__VERSION__='2026.05.08.01'
 echo "vivaxGEN Box installation script version: ${__VERSION__}"
 
 set -eu
 
 # check if we are under CONDA environment, and exit if we are
 if [[ ${CONDA_SHLVL:-} -ge 1 ]]; then
-  echo "Cannot perform installation while under an active CONDA environment."
+  echo "Cannot perform installation while under an active conda/mamba environment."
   echo "Please deactivate the environment first."
   exit 1
 fi
 
-# Detect the shell from which the script was called
-parent=$(ps -o comm $PPID |tail -1)
-parent=${parent#-}  # remove the leading dash that login shells have
-case "$parent" in
-  # shells supported by `micromamba shell init`
-  bash|fish|xonsh|zsh)
-    shell=$parent
-    ;;
-  *)
-    # use the login shell (basename of $SHELL) as a fallback
-    shell=${SHELL##*/}
-    ;;
-esac
-
-# Parsing arguments
-if [ -t 0 ] && [ -z "${BASEDIR:-}" ]; then
-  printf "Base directory? [./vvg-box] "
-  read -r BASEDIR
+# check if we are under pixi environment, and exit if we are
+if [[ ${PIXI_ENVIRONMENT_NAME:-} != "" ]]; then
+  echo "Cannot perform installation while under an active pixi environment."
+  echo "Please deactivate the environment first."
+  exit 1
 fi
 
-if [ -t 0 ] && [ -z "${uMAMBA_ENVNAME:-}" ]; then
-  printf "micromamba environment name? [vvg-box] "
-  read -r uMAMBA_ENVNAME
+# Parsing arguments
+if [ -t 0 ] && [ -z "${VVG_BASEDIR:-}" ]; then
+  printf "Base directory? [./vvg-box] "
+  read -r VVG_BASEDIR
+fi
+
+if [ -t 0 ] && [ -z "${PIXI_ENVNAME:-}" ]; then
+  printf "pixi environment name? [vvg-box] "
+  read -r PIXI_ENVNAME
 fi
 
 # Fallbacks
-export BASEDIR="${BASEDIR:-./vvg-box}"
-BINDIR="${BASEDIR}/bin"
-export uMAMBA_ENVNAME="${uMAMBA_ENVNAME:-vvg-box}"
-uMAMBA_DIR="${BASEDIR}/opt/umamba"
+export VVG_BASEDIR="${VVG_BASEDIR:-./vvg-box}"
+VVG_BASEDIR="$(realpath "${VVG_BASEDIR}")"
+BINDIR="${VVG_BASEDIR}/bin"
+export PIXI_ENVNAME="${PIXI_ENVNAME:-vvg-box}"
+
+# see https://pixi.prefix.dev/latest/reference/environment_variables/
+# set PIXI_HOME to a directory where pixi can store its data, such as installed environments and caches
+PIXI_DIR="${VVG_BASEDIR}/opt/pixi"
+VVG_PIXI_WORKSPACE_DIR="${PIXI_DIR}/${PIXI_ENVNAME}"
+export PIXI_HOME="${PIXI_DIR}/global"
+export PIXI_CACHE_DIR="${PIXI_DIR}/.cache"
+export PIP_CACHE_DIR="${PIXI_DIR}/.cache-pip"
+export RATTLER_AUTH_FILE="${PIXI_CACHE_DIR}/.rattler-credentials.json"
 
 # defaults
 PYVER="${PYVER:-3.12}"
 
 mkdir -p "${BINDIR}"
+PATH="${PIXI_HOME}/bin:${BINDIR}:${PATH}"
 
-# Computing artifact location
-case "$(uname)" in
-  Linux)
-    PLATFORM="linux" ;;
-  Darwin)
-    PLATFORM="osx" ;;
-  *NT*)
-    PLATFORM="win" ;;
-esac
+echo "Setting up base directory structure at ${VVG_BASEDIR}"
 
-ARCH="$(uname -m)"
-case "$ARCH" in
-  aarch64|ppc64le|arm64)
-      ;;  # pass
-  *)
-    ARCH="64" ;;
-esac
-
-case "$PLATFORM-$ARCH" in
-  linux-aarch64|linux-ppc64le|linux-64|osx-arm64|osx-64|win-64)
-      ;;  # pass
-  *)
-    echo "Failed to detect your OS" >&2
-    exit 1
-    ;;
-esac
-
-if [ "${VERSION:-}" = "" ]; then
-  RELEASE_URL="https://github.com/mamba-org/micromamba-releases/releases/latest/download/micromamba-${PLATFORM}-${ARCH}"
-else
-  RELEASE_URL="https://github.com/mamba-org/micromamba-releases/releases/download/micromamba-${VERSION}/micromamba-${PLATFORM}-${ARCH}"
-fi
-
-
-# Downloading artifact
-echo "Downloading and installing micromamba..."
-mkdir -p "${BINDIR}"
-if hash curl >/dev/null 2>&1; then
-  if [ -n "${CURL_OPTS:-}" ]; then
-    eval "curl ${CURL_OPTS} \"${RELEASE_URL}\" -o \"${BINDIR}/micromamba\" -fsSL --compressed"
-  else
-    curl "${RELEASE_URL}" -o "${BINDIR}/micromamba" -fsSL --compressed
-  fi
-elif hash wget >/dev/null 2>&1; then
-  if [ -n "${WGET_OPTS:-}" ]; then
-    eval "wget ${WGET_OPTS} -qO \"${BINDIR}/micromamba\" \"${RELEASE_URL}\""
-  else
-    wget -qO "${BINDIR}/micromamba" "${RELEASE_URL}"
-  fi
-else
-  echo "Neither curl nor wget was found" >&2
-  exit 1
-fi
-chmod +x "${BINDIR}/micromamba"
-
-
-# this is specific for vivaxGEN vvg-box utility
-
-echo "Setting up base directory structure at ${BASEDIR}"
-
-export OPT_DIR="${BASEDIR}/opt"
-export APPTAINER_DIR="${BASEDIR}/opt/apptainer"
-export ENVS_DIR="${BASEDIR}/envs"
-export ETC_DIR="${BASEDIR}/etc"
+export OPT_DIR="${VVG_BASEDIR}/opt"
+export APPTAINER_DIR="${VVG_BASEDIR}/opt/apptainer"
+export ENVS_DIR="${VVG_BASEDIR}/envs"
+export ETC_DIR="${VVG_BASEDIR}/etc"
 export BASHRC_DIR="${ETC_DIR}/bashrc.d"
 export SNAKEMAKEPROFILE_DIR="${ETC_DIR}/snakemake-profiles"
 
-mkdir "${OPT_DIR}"
-mkdir "${APPTAINER_DIR}"
-mkdir "${ENVS_DIR}"
-mkdir "${ETC_DIR}"
-mkdir "${BASHRC_DIR}"
-mkdir "${SNAKEMAKEPROFILE_DIR}"
+mkdir -p "${OPT_DIR}"
+mkdir -p "${APPTAINER_DIR}"
+mkdir -p "${ENVS_DIR}"
+mkdir -p "${ETC_DIR}"
+mkdir -p "${BASHRC_DIR}"
+mkdir -p "${SNAKEMAKEPROFILE_DIR}"
+mkdir -p "${VVG_PIXI_WORKSPACE_DIR}" "${PIXI_HOME}" "${PIXI_CACHE_DIR}" "${PIP_CACHE_DIR}"
+
+# check if pixi is available, and if not, install a local pixi binary
+if ! [ -x "$(command -v pixi)" ]; then
+  echo "pixi not found in PATH, installing a local pixi binary..."
+  if hash curl >/dev/null 2>&1; then
+    curl -fsSL https://pixi.sh/install.sh | PIXI_HOME="${PIXI_HOME}" PIXI_BIN_DIR="${BINDIR}" PIXI_NO_PATH_UPDATE=1 bash
+  elif hash wget >/dev/null 2>&1; then
+    wget -qO- https://pixi.sh/install.sh | PIXI_HOME="${PIXI_HOME}" PIXI_BIN_DIR="${BINDIR}" PIXI_NO_PATH_UPDATE=1 bash
+  else
+    echo "Neither curl nor wget was found, cannot bootstrap pixi." >&2
+    exit 1
+  fi
+fi
+
 
 echo "vvg-box" >> "${ETC_DIR}"/installed-repo.txt
 
@@ -143,24 +100,22 @@ for var in "${vars_to_save[@]}"; do
   echo "$var='${!var:-}'" >> "${ETC_DIR}/inst-envvars"
 done
 
-# check if we are provided with MAMBA_ROOT_PREFIX
-if [[ -z ${MAMBA_ROOT_PREFIX:-} ]]; then
-  export MAMBA_ROOT_PREFIX="${uMAMBA_DIR}"
-else
-  echo "Using provided MAMBA_ROOT_PREFIX=${MAMBA_ROOT_PREFIX}"
-fi
+# generate initial pixi enviroment
+echo "Initializing pixi environment at ${VVG_PIXI_WORKSPACE_DIR}"
+pixi init ${VVG_PIXI_WORKSPACE_DIR}
+echo "Activating pixi environment ${PIXI_ENVNAME}"
+eval "$(pixi shell-hook --manifest-path "${VVG_PIXI_WORKSPACE_DIR}/pixi.toml")"
 
-eval "$("${BINDIR}"/micromamba shell hook -s posix)"
+#eval "$("${BINDIR}"/micromamba shell hook -s posix)"
+#echo "Creating ${uMAMBA_ENVNAME} environment"
+#micromamba create -n "${uMAMBA_ENVNAME}"
 
-echo "Creating ${uMAMBA_ENVNAME} environment"
-micromamba create -n "${uMAMBA_ENVNAME}"
-
-echo "Activating micromamba base environment"
-micromamba activate "${uMAMBA_ENVNAME}"
+#echo "Activating micromamba base environment"
+#micromamba activate "${uMAMBA_ENVNAME}"
 
 if ! [ -x "$(command -v git)" ]; then
   echo "Installing git"
-  micromamba -y install "git>=2.49,<3" -c conda-forge
+  pixi global install --environment core "git>=2.49,<3" -c conda-forge
 fi
 
 # install vvg-box repo as early as possible, so that we can use its helper functions in subsequent installation scripts
@@ -168,9 +123,9 @@ echo "Cloning vivaxGEN vvg-box repository"
 # For dev: add --branch dev
 
 # VVG_URLREPO can be set to a custom repository URL, for example to install from a fork or a specific branch
-VVG_URLREPO="${VVG_URLREPO:-https://github.com/vivaxgen/vvg-box.git}"
+VVG_REPOURL="${VVG_REPOURL:-https://github.com/vivaxgen/vvg-box.git}"
 
-git clone --depth 1 "${VVG_URLREPO}" "${ENVS_DIR}"/vvg-box
+git clone --depth 1 "${VVG_REPOURL}" "${ENVS_DIR}"/vvg-box
 ln -sr "${ENVS_DIR}"/vvg-box/etc/bashrc "${ETC_DIR}"/bashrc
 
 # source the helper functions for use in this script

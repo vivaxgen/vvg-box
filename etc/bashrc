@@ -14,7 +14,7 @@ PATH=${VVG_BASEDIR}/bin:${PATH}
 export PIXI_HOME=${VVG_BASEDIR}/opt/pixi/global
 export PIXI_CACHE_DIR=${PIXI_HOME}/.cache
 export PIP_CACHE_DIR=${PIXI_HOME}/.cache-pip
-export RATTLER_AUTH_DIR=${PIXI_HOME}/.rattler-credentials.json
+export RATTLER_AUTH_FILE=${PIXI_HOME}/.rattler-credentials.json
 export APPTAINER_DIR=${VVG_BASEDIR}/opt/apptainer
 
 if [[ -z ${__IN_VVG_INSTALLATION__:-} ]]; then
