@@ -39,7 +39,7 @@ retry 5 pixi add python=${PYVER}
 
 if [[ -z ${EXCLUDE:-} ]] || [[ ! ${EXCLUDE} == *"snakemake"* ]]; then
   echo "Installing snakemake and related dependencies"
-  retry 5 pixi workspace add channel bioconda
+  retry 5 pixi workspace channel add bioconda
   retry 5 pixi add "snakemake>=9.20" snakemake-executor-plugin-cluster-generic
 else
   echo "snakemake is excluded, skipping installation"
