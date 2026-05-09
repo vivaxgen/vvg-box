@@ -3,9 +3,9 @@ vivaxGEN Box
 
 vivaxGEN Box (vvg-box) provides a lightweight environment ("box") which is
 a thin layer of environment variables on top of the Conda ecosystem, managed
-by micromamba/mamba.
-Each "box" includes its own instance of micromamba/mamba, independent of the
-system-wide Conda environment, as well as a separate C/C++ compiler.
+by pixi.
+Each "box" includes its own instance of pixi, independent of the
+system-wide Conda environment, as well as optinally separate C/C++ compilers.
 
 vvg-box is used as base installation for most of vivaxGEN software packages and
 pipelines.
@@ -26,19 +26,15 @@ To install, execute the following command::
 
 Optional enviroment variable that can be supplied for the above commands are:
 
-- MAMBA_ROOT_PREFIX
-
 - PYVER
 
-- uMAMBA_ENVNAME
+- PIXI_ENVNAME
 
-- BASEDIR
+- VVG_BASEDIR
 
 - EXCLUDE
 
 - INCLUDE
-
-- OMIT
 
 - VVG_URLREPO
 
@@ -63,9 +59,9 @@ or (pay attention to the dot at the beginning of the line)::
 
     . VVGBOX/bin/activate
     
-To install Conda-based software to the active environment, use micromamba command, eg::
+To install Conda-based software to the active environment, use pixi command, eg::
 
-    micromamba install software_name -c conda-forge -c defaults
+    pixi global install software_name -c conda-forge
 
 To run any installed software in the box without opening new shell nor sourcing
 the activation script (also for a job script), use the following pattern::
@@ -106,16 +102,13 @@ the following objectives:
   the environment.
 
 
-A standalone micromamba is utilized to provide all necessary binary
+A standalone pix is utilized to provide all necessary binary
 dependencies.
-The standalone micromamba binary will be downloaded and installed in the
+The standalone pixi binary will be downloaded and installed in the
 installation directory, and all of its configuration and settings will be
 stored in the installation directory as well.
 There will be no files stored nor any modification in the home directory of
-users, apart from pip cache in ~/.cache/pip/ and some added lines in
-``~/.conda/environments.txt`` (if the file already exists) of the user who
-executes the installation script.
-The added lines can be removed manually without affecting the installed system.
+users.
 The pip cache can be removed with ``pip cache remove`` or ``pip cache purge``
 if necessary (please consult this
 `documentation <https://pip.pypa.io/en/stable/cli/pip_cache/>`_).
@@ -128,10 +121,10 @@ installation::
                 bin/
                     activate
                     exec
-                    micromamba
+                    pixi
                     shell
                 opt/
-                    umamba/
+                    pixi/
                     apptainer/
                 envs/
                      vvg-box/
@@ -167,8 +160,8 @@ Information about each file/directory in the base layout is as follow:
 ``bin/shell``
     This is just a symlink to ``bin/activate``
 
-``opt/umamba/``
-    This directory contains any files related to micromamba, such as
+``opt/pixi/``
+    This directory contains any files related to pixi, such as
     environment settings and all binary dependencies files.
 
 ``opt/apptainer/``
@@ -209,9 +202,9 @@ Information about each file/directory in the base layout is as follow:
 
 
 The layout has been designed so that the number of files that are not managed
-is very minimal (only ``bin/activate``, ``bin/micromamba`` and
+is very minimal (only ``bin/activate``, ``bin/pixi`` and
 filesystem images under ``opt/apptainer``).
-Files under ``opt/umamba`` is managed by micromamba, while the rest of files
+Files under ``opt/pixi`` is managed by pixi, while the rest of files
 can be symbolic links to any repository in the ``envs/`` directory, which can
 be updated by pulling the respective repository.
 

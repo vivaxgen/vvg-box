@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
 # optional env variables:
-# - BASEDIR
+# - VVG_BASEDIR
 # - PIXI_ENVNAME
-# - PYVER
+# - VVG_EXCLUDE
+# - VVG_INCLUDE
 
 __VERSION__='2026.05.08.01'
 echo "vivaxGEN Box installation script version: ${__VERSION__}"
@@ -51,7 +52,7 @@ export PIP_CACHE_DIR="${PIXI_DIR}/.cache-pip"
 export RATTLER_AUTH_FILE="${PIXI_CACHE_DIR}/.rattler-credentials.json"
 
 # defaults
-PYVER="${PYVER:-3.12}"
+export PYVER="${PYVER:-3.12}"
 
 mkdir -p "${BINDIR}"
 PATH="${PIXI_HOME}/bin:${BINDIR}:${PATH}"
@@ -92,7 +93,7 @@ echo "vvg-box" >> "${ETC_DIR}"/installed-repo.txt
 # save installation environment variables
 # other installation scripts can append this file
 
-vars_to_save=(PYVER EXCLUDE INCLUDE OMIT)
+vars_to_save=(PYVER VVG_EXCLUDE VVG_INCLUDE)
 
 # Loop through and save them safely while `set -u` is enabled
 for var in "${vars_to_save[@]}"; do
