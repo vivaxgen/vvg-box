@@ -32,9 +32,9 @@ Optional enviroment variable that can be supplied for the above commands are:
 
 - VVG_BASEDIR
 
-- EXCLUDE
+- VVG_EXCLUDE
 
-- INCLUDE
+- VVG_INCLUDE
 
 - VVG_URLREPO
 
@@ -153,8 +153,8 @@ Information about each file/directory in the base layout is as follow:
 
     ``VVG_BASEDIR/bin/exec myprog -h``
 
-``bin/micromamba``
-    This is the micromamba executable binary, specific for each system/
+``bin/pixi``
+    This is the pixi executable binary, specific for each system/
     architecture.
 
 ``bin/shell``
@@ -211,7 +211,8 @@ be updated by pulling the respective repository.
 The vivaxGEN Box utility also provides some command line tools as follows:
 
 ``export-environment.sh``
-    This script can be used to export the micromamba environment files.
+    This script can be used to export the pixi environment files for sharing
+    with other users, or for backup purposes.
 
 ``generate-activation-script.py``
     This script is used to generate ``VVG_BASEDIR/bin/activate`` script.
@@ -232,14 +233,15 @@ be accessed using $VVGBIN environment variable, eg::
     $VVGBIN/update-pipeline.sh
 
 The installation script for vivaxGEN Box utility will also install the
-following software using micromamba with conda-forge channel (optional software
+following software using pixi with conda-forge channel (optional software
 will be installed unless the software are already installed in the system):
 
 - git [optional]
 - coreutils (for ``readlink`` and ``realpath``) [optional]
+- gettext (for ``envsubst``) [optional]
 - parallel [optional]
 - c compiler suite (c-compiler, usually gcc) [optional]
 - c++ compiler suite (cxx-compiler, usually g++) [optional]
 - Python (3.12)
-- Snakemake (8.x)
+- Snakemake (9.x)
 

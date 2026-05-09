@@ -144,7 +144,7 @@ echo "    $(realpath "${BINDIR}")/exec software [ARGS ...]"
 echo
 echo "example:"
 echo
-echo "    $(realpath "${BINDIR}")/exec micromamba list"
+echo "    $(realpath "${BINDIR}")/exec pixi list"
 echo
 
 # EOF
