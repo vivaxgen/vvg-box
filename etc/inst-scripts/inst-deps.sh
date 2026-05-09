@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# re-source activation script as early as possible to get access to
+# all necessary environment variables and functions
+echo "Resourcing vvg-box environment"
+__IN_VVG_INSTALLATION__=1
+source ${VVG_BASEDIR}/etc/bashrc
+
 CORE_PACKAGES=""
 
 # install core dependencies for vvg-box installation
@@ -36,10 +42,8 @@ else
   echo "All vvg-box core dependencies are already satisfied, skipping installation"
 fi
 
-INST_SCRIPTS_DIR="${ENVS_DIR}/vvg-box/etc/inst-scripts"
-
 # install python dependencies with pixi
-pixi-add ${INST_SCRIPTS_DIR}/python.spec
+pixi-add ${VVG_REPODIR}/python.spec
 
 # check if VVG_EXCLUDE variable is not set or if it does not contain "snakemake"
 
@@ -47,7 +51,7 @@ if ! defined_and_contains_any VVG_EXCLUDE snakemake; then
   echo "Installing snakemake and related dependencies"
   retry 5 pixi workspace channel add bioconda
   #retry 5 pixi add "snakemake>=9.20" snakemake-executor-plugin-cluster-generic
-  pixi-add ${INST_SCRIPTS_DIR}/snakemake.spec
+  pixi-add ${VVG_REPODIR}/snakemake.spec
 else
   echo "snakemake is excluded, skipping installation"
 fi
@@ -55,11 +59,6 @@ fi
 # prepare activation file
 echo "Preparing activation source file"
 ${ENVS_DIR}/vvg-box/bin/generate-activation-script.py
-
-# re-source activation script
-echo "Resourcing vvg-box environment"
-__IN_VVG_INSTALLATION__=1
-source ${VVG_BASEDIR}/etc/bashrc
 
 # all the following run under active vvg-box environment
 ${VVGBIN}/generate-executable-links.py
