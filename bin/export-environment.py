@@ -17,8 +17,8 @@ args = p.parse_args()
 
 if not args.outdir:
     try:
-        VVG_BASEDIR = Path(os.environ.get('VVG_BASEDIR'))
-        VVG_REPODIR = Path(os.environ.get('VVG_REPODIR'))
+        VVG_BASEDIR = Path(os.environ.get('VVG_BASEDIR')) # type: ignore
+        VVG_REPODIR = Path(os.environ.get('VVG_REPODIR')) # type: ignore
 
         outdir = VVG_BASEDIR / 'etc'
 
@@ -29,12 +29,12 @@ if not args.outdir:
 else:
     outdir = Path(args.outdir)
 
-print(f"Exporting conda environment to {outdir}/conda-env.yaml")
-ret_code = subprocess.call(f'micromamba env export > {outdir}/conda-env.yaml',
-                           shell=True)
+PIXI_HOME = Path(os.environ.get('PIXI_HOME')) # type: ignore
 
-print(f'Exporting pip environment to {outdir}/pip-freeze.txt')
-ret_code = subprocess.call(f'pip3 freeze > {outdir}/pip-freeze.txt',
-                           shell=True)
+print(f"Copying pixi global environment to {outdir}/pixi-global.toml")
+shutil.copyfile(PIXI_HOME / "manifests" / "pixi-global.toml", outdir / 'pixi-global.toml')
+
+print(f'Copying pixi workspace environment to {outdir}/pixi-workspace.toml')
+shutil.copyfile(os.environ.get("PIXI_PROJECT_MANIFEST"), outdir / 'pixi-workspace.toml')  # type: ignore
 
 # EOF
