@@ -1,6 +1,9 @@
 vivaxGEN Box
 ============
 
+Important note: this is legacy version of vvg-box that still uses micromamba.
+The latest version of vvg=box has been converted to use pixi.
+
 vivaxGEN Box (vvg-box) provides a lightweight environment ("box") which is
 a thin layer of environment variables on top of the Conda ecosystem, managed
 by micromamba/mamba.
@@ -22,7 +25,7 @@ Installation
 
 To install, execute the following command::
 
-    "${SHELL}" <(curl -L https://raw.githubusercontent.com/vivaxgen/vvg-box/main/install.sh)
+    "${SHELL}" <(curl -L https://raw.githubusercontent.com/vivaxgen/vvg-box/refs/heads/legacy/install.sh)
 
 Optional enviroment variable that can be supplied for the above commands are:
 
