@@ -40,7 +40,7 @@ INST_SCRIPTS_DIR="${ENVS_DIR}/vvg-box/etc/inst-scripts"
 
 # install other dependencies with pixi
 #retry 5 pixi add python=${PYVER} pip
-pixi-global-install ${INST_SCRIPTS_DIR}/python.txt
+pixi-add ${INST_SCRIPTS_DIR}/python.txt
 
 
 # check if EXCLUDE variable is not set or if it does not contain "snakemake"
@@ -50,7 +50,7 @@ if ! defined_and_contains_any EXCLUDE snakemake; then
   echo "Installing snakemake and related dependencies"
   retry 5 pixi workspace channel add bioconda
   #retry 5 pixi add "snakemake>=9.20" snakemake-executor-plugin-cluster-generic
-  pixi-global-install ${INST_SCRIPTS_DIR}/snakemake.txt
+  pixi-add ${INST_SCRIPTS_DIR}/snakemake.txt
 else
   echo "snakemake is excluded, skipping installation"
 fi

@@ -75,4 +75,29 @@ pixi-global-install() {
   done < "$file"
 }
 
+pixi-add() {
+  local file="$1"
+
+  if [[ ! -f "$file" ]]; then
+    echo "Error: File '$file' not found."
+    return 1
+  fi
+
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    # Trim whitespace
+    line=$(echo "$line" | xargs)
+
+    # Skip empty lines and comments
+    [[ -z "$line" || "$line" == \#* ]] && continue
+
+    expanded_line=$(echo "$line" | envsubst)
+    #echo "Expanded line: $expanded_line"
+    read -ra cmd_args <<< "$expanded_line"
+
+    echo "Executing: pixi add ${cmd_args[*]}"
+    # run pixi add for each line
+    retry 5 pixi add "${cmd_args[@]}"
+  done < "$file"
+}
+
 # EOF
