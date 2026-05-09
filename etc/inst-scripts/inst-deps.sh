@@ -13,6 +13,11 @@ if ! [ -x "$(command -v parallel)" ] || defined_and_contains_any INCLUDE paralle
   CORE_PACKAGES="${CORE_PACKAGES} parallel==20250422|20200322"
 fi
 
+if ! [ -x "$(command -v envsubst)" ] || defined_and_contains_any INCLUDE gettext; then
+  echo "Will add gettext (for envsubst)"
+  CORE_PACKAGES="${CORE_PACKAGES} gettext"
+fi
+
 if ! ([ -x "$(command -v cc)" ] && [ -x "$(command -v ar)" ]) || defined_and_contains_any INCLUDE "c-compiler"; then
   echo "Will add c-compiler"
   CORE_PACKAGES="${CORE_PACKAGES} c-compiler"
