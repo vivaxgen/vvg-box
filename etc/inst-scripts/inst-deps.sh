@@ -33,7 +33,7 @@ fi
 
 # install other dependencies with pixi
 #retry 5 pixi add python=${PYVER} pip
-pixi-global-install ${ETCDIR}/inst-scripts/python.txt
+pixi-global-install ${ETC_DIR}/inst-scripts/python.txt
 
 
 # check if EXCLUDE variable is not set or if it does not contain "snakemake"
@@ -43,7 +43,7 @@ if ! defined_and_contains_any EXCLUDE snakemake; then
   echo "Installing snakemake and related dependencies"
   retry 5 pixi workspace channel add bioconda
   #retry 5 pixi add "snakemake>=9.20" snakemake-executor-plugin-cluster-generic
-  pixi-global-install ${ETCDIR}/inst-scripts/snakemake.txt
+  pixi-global-install ${ETC_DIR}/inst-scripts/snakemake.txt
 else
   echo "snakemake is excluded, skipping installation"
 fi
