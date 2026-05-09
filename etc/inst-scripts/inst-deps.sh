@@ -42,8 +42,10 @@ else
   echo "All vvg-box core dependencies are already satisfied, skipping installation"
 fi
 
+INST_SCRIPTS_DIR="${VVG_REPODIR}/etc/inst-scripts"
+
 # install python dependencies with pixi
-pixi-add ${VVG_REPODIR}/python.spec
+pixi-add ${INST_SCRIPTS_DIR}/python.spec
 
 # check if VVG_EXCLUDE variable is not set or if it does not contain "snakemake"
 
@@ -51,7 +53,7 @@ if ! defined_and_contains_any VVG_EXCLUDE snakemake; then
   echo "Installing snakemake and related dependencies"
   retry 5 pixi workspace channel add bioconda
   #retry 5 pixi add "snakemake>=9.20" snakemake-executor-plugin-cluster-generic
-  pixi-add ${VVG_REPODIR}/snakemake.spec
+  pixi-add ${INST_SCRIPTS_DIR}/snakemake.spec
 else
   echo "snakemake is excluded, skipping installation"
 fi
