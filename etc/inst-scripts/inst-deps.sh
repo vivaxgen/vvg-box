@@ -15,12 +15,12 @@ fi
 
 if ! ([ -x "$(command -v cc)" ] && [ -x "$(command -v ar)" ]) || defined_and_contains_any INCLUDE "c-compiler"; then
   echo "Will add c-compiler"
-  CORE_PACKAGES="${CORE_PACKAGES} gcc"
+  CORE_PACKAGES="${CORE_PACKAGES} c-compiler"
 fi
 
 if ! ([ -x "$(command -v c++)" ] && [ -x "$(command -v ar)" ]) || defined_and_contains_any INCLUDE "cxx-compiler"; then
   echo "Will add cxx-compiler"
-  CORE_PACKAGES="${CORE_PACKAGES} gxx"
+  CORE_PACKAGES="${CORE_PACKAGES} cxx-compiler"
 fi
 
 # if CORE_PACKAGES is not empty, install the packages with pixi
@@ -32,15 +32,18 @@ else
 fi
 
 # install other dependencies with pixi
-retry 5 pixi add python=${PYVER}
+#retry 5 pixi add python=${PYVER} pip
+pixi-global-install ${ETCDIR}/inst-scripts/python.txt
 
 
 # check if EXCLUDE variable is not set or if it does not contain "snakemake"
 
-if [[ -z ${EXCLUDE:-} ]] || [[ ! ${EXCLUDE} == *"snakemake"* ]]; then
+#if [[ -z ${EXCLUDE:-} ]] || [[ ! ${EXCLUDE} == *"snakemake"* ]]; then
+if ! defined_and_contains_any EXCLUDE snakemake; then
   echo "Installing snakemake and related dependencies"
   retry 5 pixi workspace channel add bioconda
-  retry 5 pixi add "snakemake>=9.20" snakemake-executor-plugin-cluster-generic
+  #retry 5 pixi add "snakemake>=9.20" snakemake-executor-plugin-cluster-generic
+  pixi-global-install ${ETCDIR}/inst-scripts/snakemake.txt
 else
   echo "snakemake is excluded, skipping installation"
 fi
