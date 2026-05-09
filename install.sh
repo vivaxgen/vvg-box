@@ -168,9 +168,9 @@ echo "Cloning vivaxGEN vvg-box repository"
 # For dev: add --branch dev
 
 # VVG_URLREPO can be set to a custom repository URL, for example to install from a fork or a specific branch
-VVG_URLREPO="${VVG_URLREPO:-https://github.com/vivaxgen/vvg-box.git}"
+VVG_URLREPO="${VVG_URLREPO:- -b legacy https://github.com/vivaxgen/vvg-box.git}"
 
-git clone --depth 1 "${VVG_URLREPO}" "${ENVS_DIR}"/vvg-box
+git clone --depth 1 ${VVG_URLREPO} "${ENVS_DIR}"/vvg-box
 ln -sr "${ENVS_DIR}"/vvg-box/etc/bashrc "${ETC_DIR}"/bashrc
 
 # source the helper functions for use in this script
