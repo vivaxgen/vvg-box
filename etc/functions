@@ -65,12 +65,13 @@ pixi-global-install() {
     # Skip empty lines and comments
     [[ -z "$line" || "$line" == \#* ]] && continue
 
-    expanded_line=$(eval echo "$line")
-    echo "Expanded line: $expanded_line"
+    expanded_line=$(echo "$line" | envsubst)
+    #echo "Expanded line: $expanded_line"
+    read -ra cmd_args <<< "$expanded_line"
 
-    echo "Executing: pixi global install $expanded_line"
+    echo "Executing: pixi global install ${cmd_args[*]}"
     # run pixi global install for each line
-    retry 5 pixi global install $expanded_line
+    retry 5 pixi global install "${cmd_args[@]}"
   done < "$file"
 }
 
