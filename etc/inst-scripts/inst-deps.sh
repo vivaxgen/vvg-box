@@ -25,13 +25,28 @@ if ! [ -x "$(command -v parallel)" ] || defined_and_contains_any INCLUDE paralle
 fi
 
 if ! ([ -x "$(command -v cc)" ] && [ -x "$(command -v ar)" ]) || defined_and_contains_any INCLUDE "c-compiler"; then
-  echo "Will add c-compiler"
-  CORE_PACKAGES="${CORE_PACKAGES} c-compiler"
+  echo "Will add gcc"
+  CORE_PACKAGES="${CORE_PACKAGES} gcc"
 fi
 
 if ! ([ -x "$(command -v c++)" ] && [ -x "$(command -v ar)" ]) || defined_and_contains_any INCLUDE "cxx-compiler"; then
-  echo "Will add cxx-compiler"
-  CORE_PACKAGES="${CORE_PACKAGES} cxx-compiler"
+  echo "Will add gxx"
+  CORE_PACKAGES="${CORE_PACKAGES} gxx"
+fi
+
+if ! [ -x "$(command -v ar)" ] || defined_and_contains_any INCLUDE ar; then
+  echo "Will add binutils (for ar)"
+  CORE_PACKAGES="${CORE_PACKAGES} binutils"
+fi
+
+if ! [ -x "$(command -v make)" ] || defined_and_contains_any INCLUDE make; then
+  echo "Will add make"
+  CORE_PACKAGES="${CORE_PACKAGES} make"
+fi
+
+if ! [ -x "$(command -v cmake)" ] || defined_and_contains_any INCLUDE cmake; then
+  echo "Will add cmake"
+  CORE_PACKAGES="${CORE_PACKAGES} cmake"
 fi
 
 # if CORE_PACKAGES is not empty, install the packages with pixi
