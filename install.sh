@@ -7,7 +7,7 @@
 # - VVG_INCLUDE
 
 __VERSION__='2026.05.08.01'
-echo "vivaxGEN Box installation script version: ${__VERSION__}"
+echo ">> vivaxGEN Box installation script version: ${__VERSION__}"
 
 set -eu
 
@@ -57,7 +57,7 @@ export PYVER="${PYVER:-3.12}"
 mkdir -p "${BINDIR}"
 PATH="${PIXI_HOME}/bin:${BINDIR}:${PATH}"
 
-echo "Setting up base directory structure at ${VVG_BASEDIR}"
+echo ">> Setting up base directory structure at ${VVG_BASEDIR}"
 
 export OPT_DIR="${VVG_BASEDIR}/opt"
 export APPTAINER_DIR="${VVG_BASEDIR}/opt/apptainer"
@@ -76,33 +76,33 @@ mkdir -p "${VVG_PIXI_WORKSPACE_DIR}" "${PIXI_HOME}" "${PIXI_CACHE_DIR}" "${PIP_C
 
 # check if pixi is available, and if not, install a local pixi binary
 if ! [ -x "$(command -v pixi)" ]; then
-  echo "pixi not found in PATH, installing a local pixi binary..."
+  echo ">> pixi not found in PATH, installing a local pixi binary..."
   if hash curl >/dev/null 2>&1; then
     curl -fsSL https://pixi.sh/install.sh | PIXI_HOME="${PIXI_HOME}" PIXI_BIN_DIR="${BINDIR}" PIXI_NO_PATH_UPDATE=1 bash
   elif hash wget >/dev/null 2>&1; then
     wget -qO- https://pixi.sh/install.sh | PIXI_HOME="${PIXI_HOME}" PIXI_BIN_DIR="${BINDIR}" PIXI_NO_PATH_UPDATE=1 bash
   else
-    echo "Neither curl nor wget was found, cannot bootstrap pixi." >&2
+    echo "ERROR: Neither curl nor wget was found, cannot bootstrap pixi." >&2
     exit 1
   fi
 fi
 
 # generate initial pixi enviroment
-echo "Initializing pixi environment at ${VVG_PIXI_WORKSPACE_DIR}"
+echo ">> Initializing pixi environment at ${VVG_PIXI_WORKSPACE_DIR}"
 pixi init ${VVG_PIXI_WORKSPACE_DIR}
-echo "Activating pixi environment ${PIXI_ENVNAME}"
+echo ">> Activating pixi environment ${PIXI_ENVNAME}"
 eval "$(pixi shell-hook --manifest-path "${VVG_PIXI_WORKSPACE_DIR}/pixi.toml")"
 
 # at this point, pixi global and workspace environments are active,
 # so we can use pixi to install dependencies
 
 if ! [ -x "$(command -v git)" ]; then
-  echo "Installing git"
+  echo ">> Installing git"
   pixi global install --environment core "git>=2.49,<3" -c conda-forge
 fi
 
 # install vvg-box repo as early as possible, so that we can use its helper functions in subsequent installation scripts
-echo "Cloning vivaxGEN vvg-box repository"
+echo ">> Cloning vivaxGEN vvg-box repository"
 # For dev: add --branch dev
 
 # VVG_URLREPO can be set to a custom repository URL, for example to install from a fork or a specific branch

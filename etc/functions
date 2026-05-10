@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-echo "Helper functions from vvg-box repository is being sourced..."
+echo ">>>> Helper functions from vvg-box repository is being sourced..."
+echo ">>>> loaded: repeat retry defined_and_contains_any save_env_vars render_env pixi-global-install pixi-add"
 
 # add helper function
 repeat() { while :; do "$@" && return; sleep 5; done }

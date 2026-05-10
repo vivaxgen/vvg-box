@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# check if we are running in a pixi-based vvg-box session by checking
+# the absence of PIXI_ENVNAME variable, if not, print a warning and exit with an error code
+# if we are not, then print a warning and exit with an error code
+if [[ -z ${PIXI_ENVNAME} ]]; then
+  echo "ATTENTION: this session is not a pixi-based vvg-box session"
+  echo "ATTENTION: Please reinstall completely with the latest release!"
+  exit 1
+fi
+
 # re-source activation script as early as possible to get access to
 # all necessary environment variables and functions
 echo "Resourcing vvg-box environment"
