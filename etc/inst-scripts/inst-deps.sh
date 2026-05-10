@@ -6,6 +6,11 @@ echo "Resourcing vvg-box environment"
 __IN_VVG_INSTALLATION__=1
 source ${VVG_BASEDIR}/etc/bashrc
 
+INST_SCRIPTS_DIR="${VVG_REPODIR}/etc/inst-scripts"
+
+# install mandatory python dependencies with pixi
+pixi-add ${INST_SCRIPTS_DIR}/python.spec
+
 CORE_PACKAGES=""
 
 # install core dependencies for vvg-box installation
@@ -17,11 +22,6 @@ fi
 if ! [ -x "$(command -v parallel)" ] || defined_and_contains_any INCLUDE parallel; then
   echo "Will add parallel"
   CORE_PACKAGES="${CORE_PACKAGES} parallel==20250422|20200322"
-fi
-
-if ! [ -x "$(command -v envsubst)" ] || defined_and_contains_any INCLUDE gettext; then
-  echo "Will add gettext (for envsubst)"
-  CORE_PACKAGES="${CORE_PACKAGES} gettext"
 fi
 
 if ! ([ -x "$(command -v cc)" ] && [ -x "$(command -v ar)" ]) || defined_and_contains_any INCLUDE "c-compiler"; then
@@ -41,11 +41,6 @@ if [[ -n "${CORE_PACKAGES}" ]]; then
 else
   echo "All vvg-box core dependencies are already satisfied, skipping installation"
 fi
-
-INST_SCRIPTS_DIR="${VVG_REPODIR}/etc/inst-scripts"
-
-# install python dependencies with pixi
-pixi-add ${INST_SCRIPTS_DIR}/python.spec
 
 # check if VVG_EXCLUDE variable is not set or if it does not contain "snakemake"
 

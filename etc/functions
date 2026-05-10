@@ -50,6 +50,39 @@ defined_and_contains_any() {
     return 1
 }
 
+save_env_vars() {
+  # Default to a specific path if ETC_DIR isn't set globally
+  local target_file="${ETC_DIR:-/etc}/inst-envvars"
+
+  # Ensure the directory exists
+  mkdir -p "$(dirname "$target_file")"
+
+  for var in "$@"; do
+    # 1. Check if the variable is actually set (optional but helpful)
+    # 2. ${!var@Q} is a modern Bash (4.4+) feature that automatically
+    #    quotes the value safely for re-use in shells.
+    if [[ -v "$var" ]]; then
+      echo "$var=${!var@Q}" >> "$target_file"
+    else
+      # If unset, save as empty or skip
+      echo "$var=''" >> "$target_file"
+    fi
+  done
+}
+
+render_env() (
+    set +u
+    local input
+
+    if (($#)); then
+        input="$*"
+    else
+        input="$(cat)"
+    fi
+
+    eval "printf '%s\n' \"${input//\"/\\\"}\""
+)
+
 pixi-global-install() {
   local file="$1"
 
@@ -65,7 +98,7 @@ pixi-global-install() {
     # Skip empty lines and comments
     [[ -z "$line" || "$line" == \#* ]] && continue
 
-    expanded_line=$(echo "$line" | envsubst)
+    expanded_line=$(echo "$line" | render_env)
     #echo "Expanded line: $expanded_line"
     read -ra cmd_args <<< "$expanded_line"
 
@@ -90,7 +123,7 @@ pixi-add() {
     # Skip empty lines and comments
     [[ -z "$line" || "$line" == \#* ]] && continue
 
-    expanded_line=$(echo "$line" | envsubst)
+    expanded_line=$(echo "$line" | render_env)
     #echo "Expanded line: $expanded_line"
     read -ra cmd_args <<< "$expanded_line"
 

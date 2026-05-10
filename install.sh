@@ -87,25 +87,14 @@ if ! [ -x "$(command -v pixi)" ]; then
   fi
 fi
 
-
-echo "vvg-box" >> "${ETC_DIR}"/installed-repo.txt
-
-# save installation environment variables
-# other installation scripts can append this file
-
-vars_to_save=(PYVER VVG_EXCLUDE VVG_INCLUDE)
-
-# Loop through and save them safely while `set -u` is enabled
-for var in "${vars_to_save[@]}"; do
-  # Use indirect expansion with a default so unset variables expand to empty
-  echo "$var='${!var:-}'" >> "${ETC_DIR}/inst-envvars"
-done
-
 # generate initial pixi enviroment
 echo "Initializing pixi environment at ${VVG_PIXI_WORKSPACE_DIR}"
 pixi init ${VVG_PIXI_WORKSPACE_DIR}
 echo "Activating pixi environment ${PIXI_ENVNAME}"
 eval "$(pixi shell-hook --manifest-path "${VVG_PIXI_WORKSPACE_DIR}/pixi.toml")"
+
+# at this point, pixi global and workspace environments are active,
+# so we can use pixi to install dependencies
 
 if ! [ -x "$(command -v git)" ]; then
   echo "Installing git"
@@ -125,6 +114,11 @@ ln -sr "${ENVS_DIR}"/vvg-box/etc/bashrc "${ETC_DIR}"/bashrc
 # source the helper functions for use in this script
 source "${ENVS_DIR}"/vvg-box/etc/functions
 
+# save installation environment variables
+# other installation scripts can append this file
+save_env_vars PYVER VVG_EXCLUDE VVG_INCLUDE
+
+echo "vvg-box" >> "${ETC_DIR}"/installed-repo.txt
 source "${ENVS_DIR}"/vvg-box/etc/inst-scripts/inst-deps.sh
 
 echo
