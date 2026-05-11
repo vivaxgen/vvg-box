@@ -1,13 +1,18 @@
 #!/usr/bin/env bash
 
+# if HIST_EXT does not exist, then we set HISTEXT equal to PIXI_ENVNAME
+if [ -z "${HIST_EXT:-}" ]; then
+    export HIST_EXT="${PIXI_ENVNAME:-}"
+fi
+
 # set history
 
-if [ -n "${PIXI_ENVNAME:-}" ] && [ -z "${HIST_EXT:-}" ]; then
+if [ ! -z "${HIST_EXT:-}" ]; then
 
-    export HISTFILE="${HOME}/.bash_history.${PIXI_ENVNAME}"
+    export HISTFILE="${HOME}/.bash_history.${HIST_EXT}"
 
-    export HISTSIZE=20000
-    export HISTFILESIZE=20000
+    export HISTSIZE=${HISTSIZE:-20000}
+    export HISTFILESIZE=${HISTFILESIZE:-20000}
     history -c; history -r
 
 fi
