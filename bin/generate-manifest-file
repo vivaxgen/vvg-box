@@ -9,6 +9,10 @@ import shutil
 import subprocess
 from pathlib import Path
 
+if os.environ.get('VVG_DEVELOPMENT_MODE') != '1':
+    print('ERR: this script is still in the development stage!')
+    sys.exit(101)
+
 p = argparse.ArgumentParser()
 p.add_argument('--outdir', default='',
                help='directory for writing conda-env.yaml and pip-freeze.txt')
@@ -30,6 +34,11 @@ else:
     outdir = Path(args.outdir)
 
 PIXI_HOME = Path(os.environ.get('PIXI_HOME')) # type: ignore
+
+# TODO:
+# - parse pixi-global.toml and take out the global core environment as core
+#   should be dependent on the system
+# 
 
 print(f"Copying pixi global environment to {outdir}/pixi-global.toml")
 shutil.copyfile(PIXI_HOME / "manifests" / "pixi-global.toml", outdir / 'pixi-global.toml')
