@@ -100,6 +100,8 @@ pixi-global-install() {
     [[ -z "$line" || "$line" == \#* ]] && continue
 
     expanded_line=$(echo "$line" | render_env)
+    # if expanded_line is empty after rendering, skip it
+    [[ -z "$expanded_line" || "$expanded_line" == \#* ]] && continue
     #echo "Expanded line: $expanded_line"
     read -ra cmd_args <<< "$expanded_line"
 
@@ -125,6 +127,8 @@ pixi-add() {
     [[ -z "$line" || "$line" == \#* ]] && continue
 
     expanded_line=$(echo "$line" | render_env)
+    # if expanded_line is empty after rendering, skip it
+    [[ -z "$expanded_line" || "$expanded_line" == \#* ]] && continue
     #echo "Expanded line: $expanded_line"
     read -ra cmd_args <<< "$expanded_line"
 
