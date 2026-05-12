@@ -19,6 +19,9 @@ source ${VVG_BASEDIR}/etc/bashrc
 
 INST_SCRIPTS_DIR="${VVG_REPODIR}/etc/inst-scripts"
 
+echo -e "\e[32m>>> Checking and installing core dependencies\e[0m"
+source ${INST_SCRIPTS_DIR}/inst-deps-core.sh
+
 # if VVG_MANIFEST_FILE is not set or not defined, source the inst-deps.sh,
 # otherwise, extract the MANIFEST_FILE at VVG_BASEDIR/opt/pixi to properly
 # have all .toml files in place
