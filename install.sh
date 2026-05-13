@@ -94,7 +94,7 @@ fi
 
 # generate initial pixi enviroment
 echo -e "\e[32m>> Initializing pixi environment at ${VVG_PIXI_WORKSPACE_DIR}\e[0m"
-pixi init ${VVG_PIXI_WORKSPACE_DIR}
+pixi init ${VVG_PIXI_WORKSPACE_DIR} ${PIXI_OVERRIDE_PLATFORM:+--platform $PIXI_OVERRIDE_PLATFORM}
 echo -e "\e[32m>> Activating pixi environment ${PIXI_ENVNAME}\e[0m"
 eval "$(pixi shell-hook --manifest-path "${VVG_PIXI_WORKSPACE_DIR}/pixi.toml")"
 
