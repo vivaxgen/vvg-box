@@ -6,6 +6,7 @@
 # - VVG_EXCLUDE
 # - VVG_INCLUDE
 # - VVG_MANIFEST_FILE
+# - VVG_REPOURL
 
 __VERSION__='2026.05.08.01'
 echo -e "\e[32m>> vivaxGEN vvg-box installation script version: ${__VERSION__}\e[0m"
