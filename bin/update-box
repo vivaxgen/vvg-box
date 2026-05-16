@@ -62,7 +62,12 @@ if [ -z "$VVG_BASEDIR" ]; then
 fi
 
 export ENVS_DIR=${VVG_BASEDIR}/envs
-export BASEDIR=${VVG_BASEDIR}
+export ETC_DIR=${VVG_BASEDIR}/etc
+
+# source the original env vars used for installation
+if [ -f "${ETC_DIR}/inst-envvars" ]; then
+    source "${ETC_DIR}/inst-envvars"
+fi
 
 # source the helper functions for use in this script
 if [ -f "${ENVS_DIR}/vvg-box/etc/functions" ]; then
@@ -114,7 +119,7 @@ done
 unset p
 
 if [ "$PULL_REPO_ONLY" = true ]; then
-    echo "Pulling repositories only, skipping etc/inst-scripts/inst-deps.sh" >&2
+    echo "Pulling repositories only, skipping etc/inst-scripts/inst-stage-2.sh" >&2
     exit 0
 fi
 
@@ -135,7 +140,7 @@ if [ -f "${VVG_BASEDIR}/etc/installed-repo.txt" ]; then
         fi
 
         # Construct the path to the script for this REPO
-        SCRIPT="${VVG_BASEDIR}/envs/${REPO}/etc/inst-scripts/inst-deps.sh"
+        SCRIPT="${VVG_BASEDIR}/envs/${REPO}/etc/inst-scripts/inst-stage-2.sh"
 
         # Check if the script exists
         if [ -f "$SCRIPT" ]; then
@@ -159,7 +164,7 @@ else
     for REPO in $VVG_BASEDIR/envs/*; do
         if [ -d "$REPO" ]; then
             # Construct the path to the script for this REPO
-            SCRIPT="${REPO}/etc/inst-scripts/inst-deps.sh"
+            SCRIPT="${REPO}/etc/inst-scripts/inst-stage-2.sh"
 
             # Check if the script exists
             if [ -f "$SCRIPT" ]; then
