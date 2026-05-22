@@ -20,11 +20,13 @@ go to `the Wiki <https://github.com/vivaxgen/vvg-box/wiki>`_.
 Installation
 ------------
 
-To install, execute the following command::
+To install, execute the following command:
+
+.. code-block:: bash
 
     "${SHELL}" <(curl -L https://raw.githubusercontent.com/vivaxgen/vvg-box/main/install.sh)
 
-Optional enviroment variable that can be supplied for the above commands are:
+Optional enviroment variables that can be supplied for the above commands are:
 
 - PYVER
 
@@ -223,14 +225,14 @@ The vivaxGEN Box utility also provides some command line tools as follows:
     SNAKEMAKE_PROFILE enviroment variable accordingly to the correct
     profile.
 
-``update-pipeline.sh``
+``update-box``
     This script can be executed to update all cloned repository in the
     ``envs`` directory.
 
-After the Box utility environment has been activated, the above commands can
+After the Box utility environment has been activated, all the above commands can
 be accessed using $VVGBIN environment variable, eg::
 
-    $VVGBIN/update-pipeline.sh
+    $VVGBIN/update-box
 
 The installation script for vivaxGEN Box utility will also install the
 following software using pixi with conda-forge channel (optional software
