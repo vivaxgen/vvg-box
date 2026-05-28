@@ -134,7 +134,9 @@ pixi-add() {
 
     echo "Executing: pixi add ${cmd_args[*]}"
     # run pixi add for each line
+    set +u
     retry 5 pixi add "${cmd_args[@]}"
+    set -u
   done < "$file"
 }
 
