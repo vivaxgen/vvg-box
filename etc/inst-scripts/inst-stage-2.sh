@@ -44,3 +44,8 @@ ${VVGBIN}/link-resource-files.sh ${ENVS_DIR}/vvg-box/etc/bashrc.d
 
 echo -e "\e[32m>>> Detecting job/batch scheduler\e[0m"
 ${ENVS_DIR}/vvg-box/bin/set-snakemake-profile.py
+
+# set permission for .toml files to be readable by all users
+echo -e "\e[32m>>> Setting permissions for manifest files\e[0m"
+chmod a+r ${PIXI_PROJECT_MANIFEST}
+chmod a+r ${PIXI_HOME}/manifests/pixi-global.toml
