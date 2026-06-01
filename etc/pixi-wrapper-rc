@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+# ==============================================================================
+# 1. CORE CONFIGURATION
+# ==============================================================================
+# Define the function you want to hook into if it doesn't already exist.
+# (If this script is sourced into an environment where 'my_function' is already 
+# defined, this block will safely be skipped and it will wrap the existing one).
+if ! declare -f pixi > /dev/null; then
+    echo "pixi function not found."
+    return 1 2>/dev/null || exit 1
+fi
+
+# ==============================================================================
+# 2. THE WRAPPING MECHANISM (Pure Bash, No Sed/Regex)
+# ==============================================================================
+# Guard condition: Only run if we haven't already wrapped the function.
+# This prevents an infinite loop when the script re-sources itself.
+if ! declare -f orig_pixi > /dev/null; then
+
+    # Enable alias expansion so we can use it to rename the function safely
+    shopt -s expand_aliases
+
+    # Create a temporary alias pointing to the new name
+    alias pixi="orig_pixi"
+
+    # Feed the original definition back into Bash. 
+    # The alias forces Bash to parse 'pixi' as 'orig_pixi'.
+    eval "$(declare -f pixi)"
+
+    # Clean up the temporary alias immediately
+    unalias pixi
+
+    # --------------------------------------------------------------------------
+    # 3. DEFINE THE WRAPPER FUNCTION
+    # --------------------------------------------------------------------------
+    pixi() {
+        # A. Execute the original logic and capture its arguments/exit code
+        orig_pixi "$@"
+        local exit_code=$?
+        
+        echo "[Wrapper] 'pixi' finished."
+        echo "[Wrapper] Re-sourcing script from: ${BASH_SOURCE[0]}"
+        
+        fix-manifest-permission
+
+        # B. Verify the source file actually exists on disk before sourcing
+        if [[ -n "${BASH_SOURCE[0]}" && -f "${BASH_SOURCE[0]}" ]]; then
+            source "${BASH_SOURCE[0]}"
+        else
+            echo "[Wrapper] Error: Script source file is inaccessible. Cannot re-source." >&2
+        fi
+        
+        # C. Preserve and return the exit code of the original function
+        return $exit_code
+    }
+
+fi
+
