@@ -1,0 +1,13 @@
+# helper functions
+
+# fix .toml permission
+fix-manifest-permission() {
+    local root_dir
+    root_dir=$(dirname "$PIXI_PROJECT_MANIFEST")
+    chmod 644 "$root_dir/pixi.toml" "$root_dir/pixi.lock" 2>/dev/null || true
+    chmod 644 ${PIXI_HOME}/manifests/pixi-global.toml
+
+}
+
+
+# EOF
