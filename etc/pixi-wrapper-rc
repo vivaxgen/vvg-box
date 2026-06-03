@@ -44,24 +44,24 @@ fi
         # A. Execute the original logic and capture its arguments/exit code
 
         # if VVG_DEBUG is set, print the arguments for debugging
-        if [[ -n "$VVG_DEBUG" ]]; then
+        if [[ -n "${VVG_DEBUG:-}" ]]; then
             echo "[Wrapper] 'pixi' called with arguments: $*"
         fi
         orig_pixi "$@"
         local exit_code=$?
         # unset -f orig_pixi  # Clean up the original function definition
 
-        if [[ -n "$VVG_DEBUG" ]]; then
+        if [[ -n "${VVG_DEBUG:-}" ]]; then
             echo "[Wrapper] 'pixi' finished."
         fi
         
-        if [[ -n "$VVG_DEBUG" ]]; then
+        if [[ -n "${VVG_DEBUG:-}" ]]; then
             echo "[Wrapper] Fixing manifest permissions."
         fi
         fix-manifest-permission
 
         # B. Verify the source file actually exists on disk before sourcing
-        if [[ -n "$VVG_DEBUG" ]]; then
+        if [[ -n "${VVG_DEBUG:-}" ]]; then
             echo "[Wrapper] Re-sourcing script from: ${PIXI_WRAPPER_RC_PATH}"
         fi
         if [[ -n "${PIXI_WRAPPER_RC_PATH}" && -f "${PIXI_WRAPPER_RC_PATH}" ]]; then
