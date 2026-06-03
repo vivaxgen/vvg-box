@@ -16,6 +16,11 @@ fi
 # ==============================================================================
 # Guard condition: Only run if we haven't already wrapped the function.
 # This prevents an infinite loop when the script re-sources itself.
+
+# get absolute path to this script for later use in re-sourcing
+PIXI_WRAPPER_RC_PATH="$(realpath "${BASH_SOURCE[0]}")"
+
+
 if ! declare -f orig_pixi > /dev/null; then
 
     # Enable alias expansion so we can use it to rename the function safely
@@ -31,22 +36,36 @@ if ! declare -f orig_pixi > /dev/null; then
     # Clean up the temporary alias immediately
     unalias pixi
 
+fi
     # --------------------------------------------------------------------------
     # 3. DEFINE THE WRAPPER FUNCTION
     # --------------------------------------------------------------------------
     pixi() {
         # A. Execute the original logic and capture its arguments/exit code
+
+        # if VVG_DEBUG is set, print the arguments for debugging
+        if [[ -n "$VVG_DEBUG" ]]; then
+            echo "[Wrapper] 'pixi' called with arguments: $*"
+        fi
         orig_pixi "$@"
         local exit_code=$?
+        # unset -f orig_pixi  # Clean up the original function definition
+
+        if [[ -n "$VVG_DEBUG" ]]; then
+            echo "[Wrapper] 'pixi' finished."
+        fi
         
-        echo "[Wrapper] 'pixi' finished."
-        echo "[Wrapper] Re-sourcing script from: ${BASH_SOURCE[0]}"
-        
+        if [[ -n "$VVG_DEBUG" ]]; then
+            echo "[Wrapper] Fixing manifest permissions."
+        fi
         fix-manifest-permission
 
         # B. Verify the source file actually exists on disk before sourcing
-        if [[ -n "${BASH_SOURCE[0]}" && -f "${BASH_SOURCE[0]}" ]]; then
-            source "${BASH_SOURCE[0]}"
+        if [[ -n "$VVG_DEBUG" ]]; then
+            echo "[Wrapper] Re-sourcing script from: ${PIXI_WRAPPER_RC_PATH}"
+        fi
+        if [[ -n "${PIXI_WRAPPER_RC_PATH}" && -f "${PIXI_WRAPPER_RC_PATH}" ]]; then
+            source "${PIXI_WRAPPER_RC_PATH}"
         else
             echo "[Wrapper] Error: Script source file is inaccessible. Cannot re-source." >&2
         fi
@@ -55,5 +74,5 @@ if ! declare -f orig_pixi > /dev/null; then
         return $exit_code
     }
 
-fi
+
 
