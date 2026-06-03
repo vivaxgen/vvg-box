@@ -108,12 +108,10 @@ if ! [ -x "$(command -v git)" ]; then
 fi
 
 # install vvg-box repo as early as possible, so that we can use its helper functions in subsequent installation scripts
-echo -e "\e[32m>> Cloning vivaxGEN vvg-box repository\e[0m"
 # For dev: add --branch dev
-
 # VVG_URLREPO can be set to a custom repository URL, for example to install from a fork or a specific branch
 VVG_REPOURL="${VVG_REPOURL:-https://github.com/vivaxgen/vvg-box.git}"
-
+echo -e "\e[32m>> Cloning vivaxGEN vvg-box repository from ${VVG_REPOURL}\e[0m"
 git clone --depth 1 "${VVG_REPOURL}" "${ENVS_DIR}"/vvg-box
 ln -sr "${ENVS_DIR}"/vvg-box/etc/bashrc "${ETC_DIR}"/bashrc
 
