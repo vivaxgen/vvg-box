@@ -1,2 +1,2 @@
 # python essentials
-"python=${PYVER}" pip
+"python=${PYVER}" pip tomlkit
