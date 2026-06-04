@@ -7,43 +7,68 @@ import sys
 import argparse
 import shutil
 import subprocess
+import zipfile
 from pathlib import Path
 
-if os.environ.get('VVG_DEVELOPMENT_MODE') != '1':
-    print('ERR: this script is still in the development stage!')
+import tomlkit
+
+if os.environ.get("VVG_DEVELOPMENT_MODE") != "1":
+    print("ERR: this script is still in the development stage!")
     sys.exit(101)
 
 p = argparse.ArgumentParser()
-p.add_argument('--outdir', default='',
-               help='directory for writing conda-env.yaml and pip-freeze.txt')
+p.add_argument(
+    "--outfile",
+    "-o",
+    type=str,
+    required=True,
+    help="the output manifest file in zip format",
+)
 
 args = p.parse_args()
 
-if not args.outdir:
-    try:
-        VVG_BASEDIR = Path(os.environ.get('VVG_BASEDIR')) # type: ignore
-        VVG_REPODIR = Path(os.environ.get('VVG_REPODIR')) # type: ignore
+try:
+    VVG_BASEDIR = Path(os.environ.get("VVG_BASEDIR"))  # type: ignore
+    VVG_REPODIR = Path(os.environ.get("VVG_REPODIR"))  # type: ignore
 
-        outdir = VVG_BASEDIR / 'etc'
+except KeyError:
+    print("ERR: this script must be run under active vvg-box environment")
+    sys.exit(101)
 
-    except KeyError:
-        print('ERR: without --outdir, this script must be run under active '
-              'vvg-box environment')
-        sys.exit(101)
-else:
-    outdir = Path(args.outdir)
-
-PIXI_HOME = Path(os.environ.get('PIXI_HOME')) # type: ignore
+PIXI_HOME = Path(os.environ.get("PIXI_HOME"))  # type: ignore
 
 # TODO:
 # - parse pixi-global.toml and take out the global core environment as core
 #   should be dependent on the system
-# 
+#
 
-print(f"Copying pixi global environment to {outdir}/pixi-global.toml")
-shutil.copyfile(PIXI_HOME / "manifests" / "pixi-global.toml", outdir / 'pixi-global.toml')
+print(f"Modiying and archiving pixi global environment")
+with open(PIXI_HOME / "manifests" / "pixi-global.toml", "rb") as f:
+    pixi_global = tomlkit.load(f)
+if "envs" in pixi_global and "core" in pixi_global["envs"]:
+    del pixi_global["envs"]["core"]
+toml_string = tomlkit.dumps(pixi_global)
 
-print(f'Copying pixi workspace environment to {outdir}/pixi-workspace.toml')
-shutil.copyfile(os.environ.get("PIXI_PROJECT_MANIFEST"), outdir / 'pixi-workspace.toml')  # type: ignore
+print(
+    f"Archiving pixi global environment and workspace manifest and lock files to {args.outfile}"
+)
+with zipfile.ZipFile(args.outfile, "w") as zf:
+    # write the pixi global
+    pixi_global_rel_path = (PIXI_HOME / "manifests" / "pixi-global.toml").relative_to(
+        VVG_BASEDIR
+    )
+    zf.writestr(pixi_global_rel_path.as_posix(), toml_string)
+
+    # write the pixi workspace manifest file
+    pixi_workspace_manifest_path = Path(os.environ.get("PIXI_PROJECT_MANIFEST"))  # type: ignore
+    pixi_workspace_manifest_rel_path = pixi_workspace_manifest_path.relative_to(
+        VVG_BASEDIR
+    )
+    zf.write(pixi_workspace_manifest_path, pixi_workspace_manifest_rel_path)
+
+    # write the pixi workspace lock file
+    pixi_workspace_lock_path = pixi_workspace_manifest_path.parent / "pixi.lock"
+    pixi_workspace_lock_rel_path = pixi_workspace_lock_path.relative_to(VVG_BASEDIR)
+    zf.write(pixi_workspace_lock_path, pixi_workspace_lock_rel_path)
 
 # EOF
