@@ -16,6 +16,8 @@ fi
 echo -e "\e[32m>>> Re-sourcing vvg-box environment\e[0m"
 __IN_VVG_INSTALLATION__=1
 source ${VVG_BASEDIR}/etc/bashrc
+${VVGBIN}/link-resource-files.sh ${ENVS_DIR}/vvg-box/etc/bashrc.d
+reload_vvg_profiles
 
 INST_SCRIPTS_DIR="${VVG_REPODIR}/etc/inst-scripts"
 
@@ -39,8 +41,6 @@ ${ENVS_DIR}/vvg-box/bin/generate-activation-script.py
 
 # all the following run under active vvg-box environment
 ${VVGBIN}/generate-executable-links.py
-${VVGBIN}/link-resource-files.sh ${ENVS_DIR}/vvg-box/etc/bashrc.d
-
 
 echo -e "\e[32m>>> Detecting job/batch scheduler\e[0m"
 ${ENVS_DIR}/vvg-box/bin/set-snakemake-profile.py

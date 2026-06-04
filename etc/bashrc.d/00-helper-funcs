@@ -1,13 +1,16 @@
 # helper functions
 
-# fix .toml permission
+# function for fixing .toml permission
 fix-manifest-permission() {
     local root_dir
     root_dir=$(dirname "$PIXI_PROJECT_MANIFEST")
     chmod 644 "$root_dir/pixi.toml" "$root_dir/pixi.lock" 2>/dev/null || true
     chmod 644 ${PIXI_HOME}/manifests/pixi-global.toml
-
+    echo "Pixi manifest file permissions fixed."
 }
+
+# source the pixi wrapper
+. ${VVG_REPODIR}/etc/pixi-wrapper-rc
 
 
 # EOF

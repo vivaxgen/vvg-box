@@ -8,12 +8,12 @@ from pathlib import Path
 
 # for now, just run os.system
 
-VVGBIN = os.environ['VVGBIN']
-VVG_BASEDIR = os.environ['VVG_BASEDIR']
-BINDIR = VVG_BASEDIR + '/bin'
-VVG_REPODIR = os.environ['VVG_REPODIR']
+VVGBIN = os.environ["VVGBIN"]
+VVG_BASEDIR = os.environ["VVG_BASEDIR"]
+BINDIR = VVG_BASEDIR + "/bin"
+VVG_REPODIR = os.environ["VVG_REPODIR"]
 
-os.system(f"ln -sr {VVG_REPODIR}/bin/exec {BINDIR}/exec")
-os.system(f"ln -sr {BINDIR}/activate {BINDIR}/shell")
+os.system(f"ln -srf {VVG_REPODIR}/bin/exec {BINDIR}/exec")
+os.system(f"ln -srf {BINDIR}/activate {BINDIR}/shell")
 
 # EOF
