@@ -31,8 +31,18 @@ if [[ -z ${VVG_MANIFEST_FILE:-} ]]; then
   echo -e "\e[32m>>> No manifest file provided, installing dependencies with inst-deps.sh\e[0m"
   source ${INST_SCRIPTS_DIR}/inst-deps.sh
 else
-  echo -e "\e[32m>>> Extracting manifest file ${VVG_MANIFEST_FILE} to install dependencies\e[0m"
-  tar -xzf "${VVG_MANIFEST_FILE}" -C "${VVG_BASEDIR}/opt/pixi" --strip-components=1
+  echo -e "\e[32m>>> Manifest file provided, extracting manifest files\e[0m"
+  unzip -o "${VVG_MANIFEST_FILE}" -d "${VVG_BASEDIR}"
+  (
+    set +u
+    cd "${VVG_BASEDIR}"
+    cat opt/pixi/global/manifests/pixi-global-additional.toml >> opt/pixi/global/manifests/pixi-global.toml
+    echo -e "\e[32m>>> Syncing pixi global environment\e[0m"
+    retry 5 pixi global sync
+    echo -e "\e[32m>>> Installing pixi workspace dependencies\e[0m"
+    retry 5 pixi install
+    # or use pixi install --frozed to install exaxtly as pixi.lock
+  )
 fi
 
 # prepare activation file

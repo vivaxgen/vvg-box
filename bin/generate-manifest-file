@@ -12,10 +12,6 @@ from pathlib import Path
 
 import tomlkit
 
-if os.environ.get("VVG_DEVELOPMENT_MODE") != "1":
-    print("ERR: this script is still in the development stage!")
-    sys.exit(101)
-
 p = argparse.ArgumentParser()
 p.add_argument(
     "--outfile",
@@ -45,16 +41,17 @@ PIXI_HOME = Path(os.environ.get("PIXI_HOME"))  # type: ignore
 print(f"Modiying and archiving pixi global environment")
 with open(PIXI_HOME / "manifests" / "pixi-global.toml", "rb") as f:
     pixi_global = tomlkit.load(f)
+del pixi_global["version"]
 if "envs" in pixi_global and "core" in pixi_global["envs"]:
     del pixi_global["envs"]["core"]
 toml_string = tomlkit.dumps(pixi_global)
 
 print(
-    f"Archiving pixi global environment and workspace manifest and lock files to {args.outfile}"
+    f"Archiving pixi global manifest, workspace manifest and lock files to {args.outfile}"
 )
 with zipfile.ZipFile(args.outfile, "w") as zf:
     # write the pixi global
-    pixi_global_rel_path = (PIXI_HOME / "manifests" / "pixi-global.toml").relative_to(
+    pixi_global_rel_path = (PIXI_HOME / "manifests" / "pixi-global-additional.toml").relative_to(
         VVG_BASEDIR
     )
     zf.writestr(pixi_global_rel_path.as_posix(), toml_string)

@@ -210,11 +210,21 @@ Files under ``opt/pixi`` is managed by pixi, while the rest of files
 can be symbolic links to any repository in the ``envs/`` directory, which can
 be updated by pulling the respective repository.
 
-The vivaxGEN Box utility also provides some command line tools as follows:
+The vivaxGEN Box utility also provides some command line tools that can be accessed
+using the $VVGBIN environment variable as the path (in an active environemnt), eg::
+    
+    $VVGBIN/update-box
 
-``export-environment.sh``
-    This script can be used to export the pixi environment files for sharing
-    with other users, or for backup purposes.
+The tools are as follow:
+
+``generate-manifest-file``
+    This command generates a zip file containing the pixi environment files
+    to be used for reproducing/cloning exact environment setups for sharing
+    with other users or for backup purposes.
+    Set the VVG_MANIFEST_FILE environment variable to specify the zip file
+    when performing the installation to reproduce the environment, eg::
+
+        VVG_MANIFEST_FILE=my_cloned_env.zip "${SHELL}" <(curl -L https://raw.githubusercontent.com/vivaxgen/vvg-box/main/install.sh)
 
 ``generate-activation-script.py``
     This script is used to generate ``VVG_BASEDIR/bin/activate`` script.
@@ -228,11 +238,6 @@ The vivaxGEN Box utility also provides some command line tools as follows:
 ``update-box``
     This script can be executed to update all cloned repository in the
     ``envs`` directory.
-
-After the Box utility environment has been activated, all the above commands can
-be accessed using $VVGBIN environment variable, eg::
-
-    $VVGBIN/update-box
 
 The installation script for vivaxGEN Box utility will also install the
 following software using pixi with conda-forge channel (optional software
