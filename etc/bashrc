@@ -16,6 +16,9 @@ export PIXI_HOME=${PIXI_DIR}/global
 export PIXI_CACHE_DIR=${PIXI_HOME}/.cache
 export PIP_CACHE_DIR=${PIXI_HOME}/.cache-pip
 export RATTLER_AUTH_FILE=${PIXI_HOME}/.rattler-credentials.json
+export RATTLER_CACHE_DIR=${PIXI_HOME}/.cache-rattler
+export UV_CACHE_DIR=${PIXI_HOME}/.cache-uv
+export CCACHE_DIR=${VVG_BASEDIR}/.ccache
 export APPTAINER_DIR=${VVG_BASEDIR}/opt/apptainer
 PATH=${PIXI_HOME}/bin:${PATH}
 
