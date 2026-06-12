@@ -74,6 +74,31 @@ To add additional environment variables (such as adding more $PATH) when the env
 is activated, please see the section about etc/bashrc.d below.
 
 
+Installing Software Packages
+----------------------------
+
+Since vvg-box relies on pixi for managing the Conda environment, software packages can be
+installed using pixi command.
+Before installing software, the necessary Conda channel(s) can be added to the pixi global
+and workspace environment, eg.::
+
+    pixi config set default-channels '["conda-forge", "bioconda"]' --global
+    pixi config set default-channels '["conda-forge", "bioconda"]'
+
+For compiled or stand-alone software packages, use the global installaion command, which will
+install the software to VVGBOX/opt/pixi/global directory, eg::
+
+    pixi global install software_name -c conda-forge
+
+For Python-based or R-based package or libraries (especially for development purposes),
+it is recommended to install the software/libraries in the pixi workspace environment, eg::
+
+    pixi add software_name -c conda-forge
+
+The above command will install the package to the workspace environment, which is located in
+VVGBOX/opt/pixi/PIXI_ENVNAME/ directory.
+
+
 Quick Overview
 --------------
 
@@ -210,11 +235,21 @@ Files under ``opt/pixi`` is managed by pixi, while the rest of files
 can be symbolic links to any repository in the ``envs/`` directory, which can
 be updated by pulling the respective repository.
 
-The vivaxGEN Box utility also provides some command line tools as follows:
+The vivaxGEN Box utility also provides some command line tools that can be accessed
+using the $VVGBIN environment variable as the path (in an active environemnt), eg::
+    
+    $VVGBIN/update-box
 
-``export-environment.sh``
-    This script can be used to export the pixi environment files for sharing
-    with other users, or for backup purposes.
+The tools are as follow:
+
+``generate-manifest-file``
+    This command generates a zip file containing the pixi environment files
+    to be used for reproducing/cloning exact environment setups for sharing
+    with other users or for backup purposes.
+    Set the VVG_MANIFEST_FILE environment variable to specify the zip file
+    when performing the installation to reproduce the environment, eg::
+
+        VVG_MANIFEST_FILE=my_cloned_env.zip "${SHELL}" <(curl -L https://raw.githubusercontent.com/vivaxgen/vvg-box/main/install.sh)
 
 ``generate-activation-script.py``
     This script is used to generate ``VVG_BASEDIR/bin/activate`` script.
@@ -228,11 +263,6 @@ The vivaxGEN Box utility also provides some command line tools as follows:
 ``update-box``
     This script can be executed to update all cloned repository in the
     ``envs`` directory.
-
-After the Box utility environment has been activated, all the above commands can
-be accessed using $VVGBIN environment variable, eg::
-
-    $VVGBIN/update-box
 
 The installation script for vivaxGEN Box utility will also install the
 following software using pixi with conda-forge channel (optional software

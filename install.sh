@@ -37,6 +37,33 @@ if [ -t 0 ] && [ -z "${VVG_BASEDIR:-}" ]; then
   read -r VVG_BASEDIR
 fi
 
+# check early and process if VVG_MANIFEST_FILE is set
+if [[ -n ${VVG_MANIFEST_FILE:-} ]]; then
+  # if PIXI_ENVNAME environment variable is set, check if  check if the manifest file
+  # contains the corresponding pixi workspace manifest
+  if [[ -n ${PIXI_ENVNAME:-} ]] && ! unzip -l "${VVG_MANIFEST_FILE}" | grep -q "opt/pixi/${PIXI_ENVNAME}/pixi.toml"; then
+    echo -ne "\e[31m"
+    echo "The provided manifest file does not contain manifest for environment name: ${PIXI_ENVNAME}"
+    echo "Please provide a matched pixi environment name."
+    echo -e "\e[0m"
+    echo "Manifest file information:"
+    unzip -l "${VVG_MANIFEST_FILE}"
+    exit 1
+  else
+    MATCHED_PATH=$(unzip -Z1 "${VVG_MANIFEST_FILE}" | grep -E '^opt/pixi/[^/]+/pixi\.toml$' | head -n 1)
+    if [ -n "$MATCHED_PATH" ]; then
+      # Extract the 3rd field delimited by '/' (which is the ENV_NAME)
+      export PIXI_ENVNAME=$(echo "$MATCHED_PATH" | cut -d'/' -f3)
+      echo "Manifest file set with PIXI_ENVNAME=$PIXI_ENVNAME"
+    else
+      echo "Error: Pattern 'opt/pixi/PIXI_ENVNAME/pixi.toml' not found in the zip file." >&2
+      echo "Manifest file information:"
+      unzip -l "${VVG_MANIFEST_FILE}"
+      exit 1
+    fi
+  fi
+fi
+
 if [ -t 0 ] && [ -z "${PIXI_ENVNAME:-}" ]; then
   printf "pixi environment name? [vvg-box] "
   read -r PIXI_ENVNAME
@@ -47,6 +74,7 @@ export VVG_BASEDIR="${VVG_BASEDIR:-./vvg-box}"
 VVG_BASEDIR="$(realpath "${VVG_BASEDIR}")"
 BINDIR="${VVG_BASEDIR}/bin"
 export PIXI_ENVNAME="${PIXI_ENVNAME:-vvg-box}"
+
 
 # see https://pixi.prefix.dev/latest/reference/environment_variables/
 # set PIXI_HOME to a directory where pixi can store its data, such as installed environments and caches
@@ -101,6 +129,7 @@ eval "$(pixi shell-hook --manifest-path "${VVG_PIXI_WORKSPACE_DIR}/pixi.toml")"
 
 # at this point, pixi global and workspace environments are active,
 # so we can use pixi to install dependencies
+
 
 if ! [ -x "$(command -v git)" ]; then
   echo -e "\e[32m>> Installing git\e[0m"
