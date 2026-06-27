@@ -24,7 +24,7 @@ To install, execute the following command:
 
 .. code-block:: bash
 
-    "${SHELL}" <(curl -L https://raw.githubusercontent.com/vivaxgen/vvg-box/main/install.sh)
+    "${SHELL}" <(curl -sSL https://raw.githubusercontent.com/vivaxgen/vvg-box/main/install.sh)
 
 Optional enviroment variables that can be supplied for the above commands are:
 
