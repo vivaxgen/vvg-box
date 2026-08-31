@@ -10,14 +10,16 @@ show_help() {
 Usage: update-box [OPTIONS]
 
 Options:
-    --all               Pull repositories and run dependency scripts.
-    --pull-repo-only    Pull repositories only, skip dependency scripts.
-    -h, --help          Show this help message and exit.
+    --all                   Pull repositories and run dependency scripts.
+    --pull-repo-only        Pull repositories only, skip dependency scripts.
+    --run-dependency-only   Run dependency scripts only, skip pulling repositories.
+    -h, --help              Show this help message and exit.
 EOF
 }
 
 RUN_ALL=false
 PULL_REPO_ONLY=false
+DEPENDENCY_ONLY=false
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --all)
@@ -25,9 +27,13 @@ while [ "$#" -gt 0 ]; do
         shift
         ;;
     --pull-repo-only)
-      PULL_REPO_ONLY=true
-      shift
-      ;;
+        PULL_REPO_ONLY=true
+        shift
+        ;;
+    --run-dependency-only)
+        DEPENDENCY_ONLY=true
+        shift
+        ;;
     -h|--help)
         show_help
         exit 0
@@ -46,8 +52,8 @@ if [ "$RUN_ALL" = true ] && [ "$PULL_REPO_ONLY" = true ]; then
     exit 1
 fi
 
-if [ "$RUN_ALL" != true ] && [ "$PULL_REPO_ONLY" != true ]; then
-    echo "Error: Please specify one mode: --all or --pull-repo-only." >&2
+if [ "$RUN_ALL" != true ] && [ "$PULL_REPO_ONLY" != true ] && [ "$DEPENDENCY_ONLY" != true ]; then
+    echo "Error: Please specify one mode: --all, --pull-repo-only, or --run-dependency-only." >&2
     echo "Run 'update-box --help' to see available options." >&2
     exit 1
 fi
@@ -77,58 +83,64 @@ else
     exit 1
 fi
 
-# if VVG_PULL_WITHOUT_TAG is set, then all pulls are not using tag
+# only update repositories if --all or --pull-repo-only is specified
 
-echo "Updating all repositories under $VVG_BASEDIR/envs..." >&2
-for p in $VVG_BASEDIR/envs/*; do
-    # Check if the path is a directory
-    if [ -d "$p" ]; then
-        echo "Updating ${p}" >&2
-        (
-            cd "$p";
-            # Check if the directory is a git repository
-            if [ -d ".git" ]; then
-                echo "Updating ${p} git repository" >&2
-            else
-                echo "Not a git repository, skipping ${p}" >&2
-                continue
-            fi
-            # Check if repository has tag
-            if [ -z "${VVG_PULL_WITHOUT_TAG+x}" ] && [ -f ".git-pull-tag" ]; then
-                tag=$(<.git-pull-tag)
-                if [ -n "$tag" ]; then
-                    echo "Pulling from main ${tag}" >&2
-                    if ! git pull origin "${tag}"; then
-                        echo "Error: Failed to pull from ${tag}" >&2
+if [ "$RUN_ALL" = true ] || [ "$PULL_REPO_ONLY" = true ]; then
+
+    # if VVG_PULL_WITHOUT_TAG is set, then all pulls are not using tag
+
+    echo "Updating all repositories under $VVG_BASEDIR/envs..." >&2
+    for p in $VVG_BASEDIR/envs/*; do
+        # Check if the path is a directory
+        if [ -d "$p" ]; then
+            echo "Updating ${p}" >&2
+            (
+                cd "$p";
+                # Check if the directory is a git repository
+                if [ -d ".git" ]; then
+                    echo "Updating ${p} git repository" >&2
+                else
+                    echo "Not a git repository, skipping ${p}" >&2
+                    continue
+                fi
+                # Check if repository has tag
+                if [ -z "${VVG_PULL_WITHOUT_TAG+x}" ] && [ -f ".git-pull-tag" ]; then
+                    tag=$(<.git-pull-tag)
+                    if [ -n "$tag" ]; then
+                        echo "Pulling from main ${tag}" >&2
+                        if ! git pull origin "${tag}"; then
+                            echo "Error: Failed to pull from ${tag}" >&2
+                        fi
+                    else
+                        echo "Warning: empty tag, pulling from main" >&2
+                        if ! git pull; then
+                            echo "Error: Failed to pull from main" >&2
+                        fi
                     fi
                 else
-                    echo "Warning: empty tag, pulling from main" >&2
+                    echo "Pulling from main" >&2
                     if ! git pull; then
                         echo "Error: Failed to pull from main" >&2
                     fi
                 fi
-            else
-                echo "Pulling from main" >&2
-                if ! git pull; then
-                    echo "Error: Failed to pull from main" >&2
-                fi
-            fi
-        )
-    fi
-done
-unset p
+            )
+        fi
+    done
+    unset p
+fi
 
 if [ "$PULL_REPO_ONLY" = true ]; then
     echo "Pulling repositories only, skipping etc/inst-scripts/inst-stage-2.sh" >&2
     exit 0
 fi
 
-# only do this when --all is specified, otherwise just pull the repositories and skip the dependency scripts
+# only do the following when --all or --run-dependency-only is specified
 
 # check for existence of etc/installed-repo.txt to perform etc/inst-script/int-deps.sh in order
 # otherwise, just perform in alphanumeric order
 
 # Check if etc/installed-repo.txt exists
+echo "Running dependency scripts..." >&2
 if [ -f "${VVG_BASEDIR}/etc/installed-repo.txt" ]; then
     # Loop through each line in the etc/installed-repo.txt file and run the script
     # for each repository
